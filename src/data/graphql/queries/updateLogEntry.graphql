@@ -1,0 +1,11 @@
+mutation UpdateLogEntry ($logEntry:UpdateLogEntryInput!) {
+  updateLogEntry (logEntry:$logEntry) {
+    id
+    recoId
+    type
+    numValue
+    textValue
+    title
+    text
+  }
+}

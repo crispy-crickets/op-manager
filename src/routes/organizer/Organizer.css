@@ -1,0 +1,210 @@
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
+@import '../../components/variables.css';
+
+.root {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 0 40px;
+  max-width: var(--max-content-width);
+}
+
+.modules {
+  margin-top: 24px;
+}
+
+.modules .recoInfo {
+  margin-bottom: 12px;
+}
+
+.modules .recoInfo .logEntry {
+}
+
+.logEntry .logEntryRow1 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logEntry .logEntryRow1 .logEntryValue {
+}
+
+.logEntry .logEntryRow1 .logEntryValue .logEntryValueInput {
+  width: 60px;
+}
+
+.logEntry .logEntryText {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logEntryText .logEntryTextInput {
+  width: 80%;
+}
+
+.logEntryText .logEntrySubmit {
+  width: 19%;
+}
+
+.logItem {
+  display: flex;
+}
+
+.logItem .logItemDate {
+  font-weight: bold;
+  width: 15%;
+}
+
+.logItem .logItemType {
+  width: 15%;
+}
+
+.logItem .logItemTitle {
+  width: 15%;
+}
+
+.logItem .logItemValue {
+  width: 10%;
+}
+
+.logItem .logItemText {
+  max-width: 58%;
+}
+
+.moduleSummary {
+  max-height: 100px;
+  transition: max-height 0.75s;
+}
+
+.expanded {
+  height: 400px;
+  max-height: 400px;
+}
+
+.moduleSummary .header {
+  border-top: 1px solid #CCC;
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% - 32px);
+}
+
+.moduleSummary .header .name {
+  font-size: 24px;
+}
+
+.moduleSummary .header .name a {
+  color: #000;
+}
+
+.moduleSummary .header .stats {
+  margin-top: 8px;
+  display: flex;
+}
+
+.moduleSummary .header .stats .stat {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-right: 16px;
+}
+
+.moduleSummary .header .controls {
+}
+
+.moduleOverview {
+  margin-top: 16px;
+}
+
+.moduleOverview .controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+  margin-right: 32px;
+}
+
+.moduleOverview .layout {
+  display: flex;
+}
+
+.moduleOverview .layout .content {
+  width: calc(100% - 32px);
+}
+
+.moduleOverview .layout .content .wall {
+
+}
+
+.moduleOverview .layout .content .wall .row {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+}
+
+.moduleOverview .layout .content .wall .addRow {
+  display: flex;
+  justify-content: center;
+  border: 1px dashed #CCC;
+}
+
+.moduleOverview .layout .content .wall .row .slot {
+}
+
+.moduleOverview .layout .content .wall .row .slot .reco {
+}
+
+.moduleOverview .layout .content .wall .row .slot .recoNew {
+  background-color: #efefef;
+}
+
+.moduleOverview .layout .content .wall .row .slot .recoSelected {
+  border: 1px solid black;
+}
+
+.moduleOverview .layout .content .wall .row .slot .emptySlot {
+}
+
+.moduleOverview .layout .content .corridor {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  background-color: #EFEFEF;
+}
+
+.moduleOverview .layout .guide {
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.moduleOverview .layout .guide .block {
+  display: flex;
+  transform: rotate(270deg);
+  color: #AAA;
+}
+
+.moduleOverview .layout .guide .right {
+  justify-content: flex-end;
+}
+
+.moduleOverview .layout .guide .door {
+  justify-content: center;
+}
+
+.moduleOverview .layout .guide .left {
+  justify-content: flex-start;
+}

@@ -1,0 +1,3 @@
+mutation DeleteLogEntry ($id:String!) {
+  deleteLogEntry (id:$id)
+}

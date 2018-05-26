@@ -1,0 +1,10 @@
+mutation CreateReco ($reco:RecoInput!) {
+  createReco (reco:$reco) {
+    id
+    moduleId
+    name
+    moduleSide
+    rowNumber
+    slotIndex
+  }
+}

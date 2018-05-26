@@ -1,0 +1,3 @@
+mutation DeleteModule ($id:String!) {
+  deleteModule (id:$id)
+}

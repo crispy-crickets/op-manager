@@ -1,0 +1,3 @@
+mutation DeleteReco ($id:String!) {
+  deleteReco (id:$id)
+}

@@ -1,0 +1,10 @@
+mutation UpdateReco ($reco:UpdateRecoInput!) {
+  updateReco (reco:$reco) {
+    id
+    moduleId
+    name
+    moduleSide
+    rowNumber
+    slotIndex
+  }
+}

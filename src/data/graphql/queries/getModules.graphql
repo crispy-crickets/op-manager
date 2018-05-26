@@ -1,0 +1,18 @@
+query OrganizerModules {
+  getAllModules {
+    id
+    name
+    size
+    rowsRight
+    rowsLeft
+    recos {
+      id
+      moduleId
+      name
+      moduleSide
+      rowNumber
+      slotIndex,
+      state
+    }
+  }
+}

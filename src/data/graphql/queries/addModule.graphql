@@ -1,0 +1,7 @@
+mutation CreateModule ($module:ModuleInput!) {
+  createModule (module:$module) {
+    id
+    name
+    size
+  }
+}

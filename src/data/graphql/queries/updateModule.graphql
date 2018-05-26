@@ -1,0 +1,9 @@
+mutation UpdateModule ($module:UpdateModuleInput!) {
+  updateModule (module:$module) {
+    id
+    name
+    size
+    rowsRight
+    rowsLeft
+  }
+}

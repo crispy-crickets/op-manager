@@ -1,0 +1,12 @@
+query LogEntries ($recoId:String!) {
+  getAllLogEntries (recoId: $recoId) {
+    id
+    recoId
+    type
+    numValue
+    textValue
+    title
+    text
+    createdAt
+  }
+}

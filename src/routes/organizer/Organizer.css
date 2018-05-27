@@ -40,6 +40,7 @@
   margin-top: 25px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .modulesHeader .modulesStats {
@@ -55,7 +56,13 @@
 }
 
 .modulesHeader .modulesControls .addModule {
+  height: 23px;
   display: flex;
+  align-items: center;
+}
+
+.addModule .textField {
+  margin-right: 6px;
 }
 
 .modulesHeader .modulesControls .hidden {
@@ -68,6 +75,7 @@
 
 .modules .recoInfo {
   margin-bottom: 12px;
+  margin-top: 24px;
 }
 
 .modules .recoInfo .logEntry {
@@ -78,7 +86,24 @@
   justify-content: space-between;
 }
 
+.logEntry .logEntryRow1 .logEntryRight {
+  display: flex;
+  align-items: center;
+}
+
+.logEntry .logEntryRow1 .logEntryRight select {
+  height: 24px;
+  margin-top: 12px;
+}
+
 .logEntry .logEntryRow1 .logEntryValue {
+  display: flex;
+  align-items: center;
+}
+
+.logEntry .logEntryRow1 .logEntryValue select {
+  height: 24px;
+  margin-top: 12px;
 }
 
 .logEntry .logEntryRow1 .logEntryValue .logEntryValueInput {
@@ -86,86 +111,111 @@
 }
 
 .logEntry .logEntryText {
-  margin-top: 8px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .logEntryText .logEntryTextInput {
-  width: 80%;
+  width: 88%;
 }
 
 .logEntryText .logEntrySubmit {
-  width: 19%;
+  width: 8%;
 }
 
 .logItem {
   display: flex;
 }
 
-.logItem .logItemDate {
+.logItem .left {
+  display: flex;
+  width: 50%;
+}
+
+.logItem .right {
+  display: flex;
+  width: 50%;
+}
+
+.logItem .left .logItemDate {
   font-weight: bold;
+  width: 30%;
+  padding-left: 4px;
+}
+
+.logItem .left .logItemType {
   width: 15%;
 }
 
-.logItem .logItemType {
-  width: 15%;
+.logItem .left .logItemTitle {
+  width: 50%;
 }
 
-.logItem .logItemTitle {
-  width: 15%;
+.logItem .left .logItemValue {
+  width: 20%;
 }
 
-.logItem .logItemValue {
-  width: 10%;
+.logItem .right .logItemText {
+  display: flex;
+  width: 100%;
 }
 
-.logItem .logItemText {
-  max-width: 58%;
+.recoInfo .stripeBg {
+  background-color: #ECECEC;
 }
 
 .moduleSummary {
-  max-height: 100px;
-  transition: max-height 0.75s;
-}
-
-.expanded {
-  height: 400px;
-  max-height: 400px;
 }
 
 .moduleSummary .header {
   border-top: 1px solid #ccc;
   display: flex;
   justify-content: space-between;
-  width: calc(100% - 32px);
+  height: 32px;
 }
 
 .moduleSummary .header .name {
-  font-size: 24px;
+  font-size: 18px;
+  width: 33%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
 }
 
 .moduleSummary .header .name a {
-  color: #000;
+  color: #fff;
+  text-decoration: none;
 }
 
 .moduleSummary .header .stats {
-  margin-top: 8px;
   display: flex;
+  align-items: center;
 }
 
 .moduleSummary .header .stats .stat {
-  padding-top: 4px;
-  padding-bottom: 4px;
   margin-right: 16px;
+  display: flex;
+  align-items: center;
 }
 
 .moduleSummary .header .controls {
+  display: flex;
+  align-items: center;
 }
 
 .moduleOverview {
   margin-top: 16px;
+  max-height: 0;
+  transition: max-height 0.75s ease-out;
+  overflow: hidden;
+}
+
+.expanded {
+  max-height: 1000px;
+  transition: max-height 0.75s ease-in;
 }
 
 .moduleOverview .controls {
@@ -200,20 +250,70 @@
 }
 
 .moduleOverview .layout .content .wall .row .slot {
+  background-color: #efefef;
+  flex: 1;
+  margin: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  font-size: 12px;
+  position: relative;
 }
 
-.moduleOverview .layout .content .wall .row .slot .reco {
+.slot .emptySlot {
+  color: #888;
 }
 
-.moduleOverview .layout .content .wall .row .slot .recoNew {
+.slot .reco {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot .recoNew {
   background-color: #efefef;
 }
 
-.moduleOverview .layout .content .wall .row .slot .recoSelected {
-  border: 1px solid black;
+.slot .recoSelected {
+  border: 3px solid black;
+  position: absolute;
+  width: 140%;
+  height: 140%;
+  z-index: 1;
 }
 
-.moduleOverview .layout .content .wall .row .slot .emptySlot {
+.reco .recoContent {
+  width: 100%;
+  height: calc(100% - 8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.reco .growing {
+  background-color: #88AA88;
+  color: black;
+  border-top: 4px solid #88AA88;
+  border-bottom: 4px solid #88AA88;
+}
+
+.reco .laying {
+  background-color: goldenrod;
+  color: black;
+  border-top: 4px solid goldenrod;
+  border-bottom: 4px solid goldenrod;
+}
+
+.reco .actionAlert {
+  border-top: 4px solid #AA4444;
+}
+
+.reco .infoAlert {
+  border-bottom: 4px solid #00BFFF;
 }
 
 .moduleOverview .layout .content .corridor {

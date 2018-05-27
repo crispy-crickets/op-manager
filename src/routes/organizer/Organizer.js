@@ -160,44 +160,39 @@ class Organizer extends React.Component {
               slotRowNumber,
               slotIndex,
             );
+
+            const recoSelected = (reco && selectedReco && selectedReco.id === reco.id);
+            const stateStyles = {
+              'growing': s.growing,
+              'laying': s.laying
+            };
+
             const recoElem = reco ? (
-              !selectedReco || selectedReco.id !== reco.id ? (
-                <div
-                  className={cx(s.reco, s.recoNew)}
-                  onClick={() => {
-                    setValue('newLogEntryType', 'pinheads');
-                    setValue('newLogEntryTitle', 'Added pinheads');
-                    setValue('selectedReco', reco);
-                    getAllLogEntries(reco.id);
-                  }}
-                >
-                  {reco.slotIndex}
+              <div
+                className={cx(s.reco, recoSelected ? s.recoSelected : {})}
+                onClick={recoSelected ? () => setValue('selectedReco', null) : () => {
+                  setValue('selectedReco', reco);
+                  setValue('newLogEntryType', 'pinheads');
+                  setValue('newLogEntryTitle', 'Added pinheads');
+                  getAllLogEntries(reco.id);
+                }}
+              >
+                <div className={cx(s.recoContent, reco.actionAlert ? s.actionAlert : {}, reco.infoAlert ? s.infoAlert : {}, stateStyles[reco.state])}>
+                  {reco.slotIndex + 1}
                 </div>
-              ) : (
-                <div
-                  className={cx(s.reco, s.recoNew, s.recoSelected)}
-                  onClick={() => setValue('selectedReco', null)}
-                >
-                  {reco.slotIndex}
-                </div>
-              )
+              </div>
             ) : (
-              <div className={s.emptySlot}>
-                <a
-                  href="#"
-                  onClick={() =>
-                    addReco({
-                      reco: {
-                        moduleId: module.id,
-                        moduleSide,
-                        rowNumber: slotRowNumber,
-                        slotIndex,
-                      },
-                    })
-                  }
-                >
-                  X
-                </a>
+              <div className={s.emptySlot} onClick={() =>
+                addReco({
+                  reco: {
+                    moduleId: module.id,
+                    moduleSide,
+                    rowNumber: slotRowNumber,
+                    slotIndex,
+                  },
+                })
+              }>
+                {slotIndex + 1}
               </div>
             );
             return <div className={s.slot}>{recoElem}</div>;
@@ -239,6 +234,8 @@ class Organizer extends React.Component {
   render() {
     const {
       addModule,
+      updateModule,
+      updateReco,
       deleteModule,
       showAddModule,
       setValue,
@@ -262,6 +259,7 @@ class Organizer extends React.Component {
       newLogEntryValue,
       newLogEntryTitle,
       newLogEntryText,
+      newRecoState,
       selectedReco,
       data: { loading, getAllModules },
     } = this.props;
@@ -294,20 +292,24 @@ class Organizer extends React.Component {
                 </a>
               </div>
               <div className={cx(s.addModule, !showAddModule ? s.hidden : {})}>
-                <TextField
-                  label="Size"
-                  value={newModuleSize || ''}
-                  onChange={e => {
-                    setValue('newModuleSize', e.target.value);
-                  }}
-                />
-                <TextField
-                  label="Name"
-                  value={newModuleName || ''}
-                  onChange={e => {
-                    setValue('newModuleName', e.target.value);
-                  }}
-                />
+                <div className={s.textField}>
+                  <TextField
+                    label="Size"
+                    value={newModuleSize || ''}
+                    onChange={e => {
+                      setValue('newModuleSize', e.target.value);
+                    }}
+                  />
+                </div>
+                <div className={s.textField}>
+                  <TextField
+                    label="Name"
+                    value={newModuleName || ''}
+                    onChange={e => {
+                      setValue('newModuleName', e.target.value);
+                    }}
+                  />
+                </div>
                 <Button
                   label="Add"
                   onClick={() => {
@@ -319,9 +321,8 @@ class Organizer extends React.Component {
                     });
                   }}
                 />
-                <a href="#" onClick={() => setValue('showAddModule', false)}>
-                  Cancel
-                </a>
+                &nbsp;
+                <Button label="Cancel" onClick={() => setValue('showAddModule', false)} />
               </div>
             </div>
           </div>
@@ -406,42 +407,53 @@ class Organizer extends React.Component {
                   );
                 }
 
+                const typeUnits = {
+                  'pinheads': 'ml',
+                  'feed': 'kg',
+                  'water': 'l',
+                  'egg-tray-in': 'tray(s)',
+                  'egg-tray-out': 'tray(s)',
+                  'state-change': ''
+                };
+
+                const defaultTitles = {
+                  'pinheads': 'Added pinheads',
+                  'feed': 'Added feed',
+                  'water': 'Added water',
+                  'egg-tray-in': 'Placed egg trays',
+                  'egg-tray-out': 'Removed egg trays',
+                  'state-change': 'Changed state'
+                };
+
                 return (
                   <div key={module.id}>
                     <div
                       className={cx(
-                        s.moduleSummary,
-                        module.id === selectedModule ? s.expanded : {},
+                        s.moduleSummary
                       )}
                     >
                       <div className={s.header}>
-                        <div>
-                          <div className={s.name}>
-                            <a
-                              href="#"
-                              onClick={() =>
-                                setValue('selectedModule', module.id)
-                              }
-                            >
-                              {module.name}
-                            </a>
-                          </div>
-                          <div className={s.stats}>
-                            <div className={s.stat}>524 Recos</div>
-                            <div className={s.stat}>Temp 34'C</div>
-                            <div className={s.stat}>Hum 19'</div>
-                          </div>
+                        <div className={s.name}>
+                          <a
+                            href="#"
+                            onClick={ !selectedModule ? () => setValue('selectedModule', module.id) : () => setValue('selectedModule', null) }
+                          >
+                            {module.name}
+                          </a>
                         </div>
-                        <div>
-                          <div className={s.controls}>
-                            <a href="#" onClick={() => deleteModule(module.id)}>
-                              Remove
-                            </a>
-                          </div>
+                        <div className={s.stats}>
+                          <div className={s.stat}>524 Recos</div>
+                          <div className={s.stat}>Temp 34'C</div>
+                          <div className={s.stat}>Hum 19'</div>
+                        </div>
+                        <div className={s.controls}>
+                          <a href="#" onClick={() => deleteModule(module.id)}>
+                            Remove
+                          </a>
                         </div>
                       </div>
-                      {module.id === selectedModule && (
-                        <div className={s.moduleOverview}>
+                      {(
+                        <div className={cx(s.moduleOverview, module.id === selectedModule ? s.expanded : {})}>
                           <div className={s.controls}>
                             {addRow ? (
                               <div>
@@ -500,22 +512,14 @@ class Organizer extends React.Component {
                         </div>
                       )}
                     </div>
-                    {selectedReco && (
+                    {(selectedReco && selectedModule && selectedModule === module.id) && (
                       <div className={s.recoInfo}>
-                        <div>State: {selectedReco.state}</div>
                         <div className={s.logEntry}>
                           <div className={s.logEntryRow1}>
-                            <div>
+                            <div className={s.logEntryRight}>
                               <select
                                 value={newLogEntryType}
                                 onChange={e => {
-                                  const defaultTitles = {
-                                    pinheads: 'Added pinheads',
-                                    feed: 'Added feed',
-                                    water: 'Added water',
-                                    'egg-tray-in': 'Placed egg trays',
-                                    'egg-tray-out': 'Removed egg trays',
-                                  };
                                   setValue('newLogEntryType', e.target.value);
                                   setValue(
                                     'newLogEntryTitle',
@@ -530,9 +534,10 @@ class Organizer extends React.Component {
                                 <option value="egg-tray-out">
                                   Egg tray out
                                 </option>
+                                <option value="state-change">State</option>
                               </select>&nbsp;
-                              <input
-                                type="text"
+                              <TextField
+                                label={'Title'}
                                 value={newLogEntryTitle}
                                 onChange={e =>
                                   setValue('newLogEntryTitle', e.target.value)
@@ -540,29 +545,43 @@ class Organizer extends React.Component {
                               />
                             </div>
                             <div className={s.logEntryValue}>
-                              Value:{' '}
-                              <input
-                                className={s.logEntryValueInput}
-                                type="text"
-                                value={newLogEntryValue}
-                                onChange={e =>
-                                  setValue('newLogEntryValue', e.target.value)
-                                }
-                              />
+                              {
+                                (newLogEntryType === 'state-change') ?
+                                  <select
+                                    value={newRecoState || selectedReco.state}
+                                    onChange={e => {
+                                      setValue('newRecoState', e.target.value);
+                                    }}>
+                                    <option value="growing">Growing</option>
+                                    <option value="laying">Laying</option>
+                                  </select> :
+                                  <div>
+                                    <TextField
+                                      className={s.logEntryValueInput}
+                                      label={'Value'}
+                                      value={newLogEntryValue}
+                                      onChange={e =>
+                                        setValue('newLogEntryValue', e.target.value)
+                                      }
+                                    />&nbsp;
+                                    {typeUnits[newLogEntryType]}
+                                  </div>
+                              }
                             </div>
                           </div>
                           <div className={s.logEntryText}>
-                            <input
-                              type="text"
-                              className={s.logEntryTextInput}
+                            <TextField className={s.logEntryTextInput}
+                              label={'Notes'}
                               value={newLogEntryText}
                               onChange={e =>
                                 setValue('newLogEntryText', e.target.value)
                               }
                             />
-                            <button
+                            <Button
                               className={s.logEntrySubmit}
+                              label={'Add'}
                               onClick={() => {
+
                                 const logEntry = {
                                   recoId: selectedReco.id,
                                   type: newLogEntryType,
@@ -578,10 +597,15 @@ class Organizer extends React.Component {
                                   logEntry.textValue = newLogEntryValue;
                                 }
                                 createLogEntry({ logEntry });
+                                console.log("new log entry", newLogEntryType);
+                                if (newLogEntryType === 'state-change') {
+                                  updateReco({
+                                    reco: { id: selectedReco.id, values: { state: newRecoState } },
+                                  });
+                                }
+
                               }}
-                            >
-                              Add
-                            </button>
+                            />
                           </div>
                         </div>
                         <div>
@@ -589,19 +613,23 @@ class Organizer extends React.Component {
                             logEntries ||
                             this.props.data.getAllLogEntries ||
                             []
-                          ).map(logEntry => (
-                            <div className={s.logItem}>
-                              <div className={s.logItemDate}>
-                                {this.formatLogItemDate(logEntry.createdAt)}
+                          ).map((logEntry, index) => (
+                            <div className={cx(s.logItem, index % 2 !== 0 ? s.stripeBg : {})}>
+                              <div className={s.left}>
+                                <div className={s.logItemDate}>
+                                  {this.formatLogItemDate(logEntry.createdAt)}
+                                </div>
+                                <div className={s.logItemTitle}>
+                                  {logEntry.title || logEntry.type}
+                                </div>
+                                <div className={s.logItemValue}>
+                                  {logEntry.numValue || logEntry.textValue}
+                                </div>
                               </div>
-                              <div className={s.logItemTitle}>
-                                {logEntry.title || logEntry.type}
-                              </div>
-                              <div className={s.logItemValue}>
-                                {logEntry.numValue || logEntry.textValue}
-                              </div>
-                              <div className={s.logItemText}>
-                                {logEntry.text}
+                              <div className={s.right}>
+                                <div className={s.logItemText}>
+                                  {logEntry.text}
+                                </div>
                               </div>
                             </div>
                           ))}

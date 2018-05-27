@@ -238,18 +238,27 @@ export default function organizer(state = null, action) {
     case CREATE_LOG_START: {
       return {
         ...state,
-        newReco: action.payload.reco
+        newReco: action.payload.logEntry
       };
     }
 
     case CREATE_LOG_SUCCESS: {
+      console.log("create log success", action.payload);
+      const { type } = action.payload.logEntry;
+      const nextTypes = {
+        'pinheads': ['water', 'Added water'],
+        'water': ['feed', 'Added feed'],
+        'feed': ['water', 'Added water'],
+        'egg-tray-in': ['egg-tray-out', 'Removed egg trays'],
+        'egg-tray-out': ['egg-tray-in', 'Placed egg trays'],
+      };
       return {
         ...state,
         createdLogEntry: action.payload.logEntry,
-        newLogEntryTitle: '',
         newLogEntryText: '',
         newLogEntryValue: '',
-        newLogEntryType: '',
+        newLogEntryType: nextTypes[type][0],
+        newLogEntryTitle: nextTypes[type][1],
         newLogEntry: null,
       };
     }

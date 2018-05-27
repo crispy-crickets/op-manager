@@ -11,8 +11,10 @@ query OrganizerModules {
       name
       moduleSide
       rowNumber
-      slotIndex,
+      slotIndex
       state
+      actionAlert
+      infoAlert
     }
   }
 }

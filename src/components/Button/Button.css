@@ -9,11 +9,13 @@
 
 @import '../variables.css';
 
-.container {
+.button {
   padding-left: 14px;
   padding-right: 14px;
   display: flex;
   align-items: center;
-  height: 38px;
-  border: 1px solid #efefef;
+  justify-content: center;
+  height: 34px;
+  border: 1px solid #aaa;
+  cursor: pointer;
 }

@@ -10,13 +10,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import cx from 'classnames';
 import s from './Button.css';
 
 class Button extends React.Component {
   render() {
-    const { label, onClick } = this.props;
+    const { label, onClick, className } = this.props;
     return (
-      <div className={s.container} onClick={onClick}>
+      <div className={cx(s.button, className)} onClick={onClick}>
         {label}
       </div>
     );

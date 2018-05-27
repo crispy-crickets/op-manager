@@ -8,6 +8,7 @@ export const schema = [
     moduleSide: String
     rowNumber: Int
     slotIndex: Int
+    state: String
   }
   
   input UpdateRecoInput {

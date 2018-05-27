@@ -1,4 +1,4 @@
-import { Module, Reco } from 'data/models';
+import { Module, Reco, LogEntry } from 'data/models';
 
 export const schema = [
   `
@@ -36,9 +36,21 @@ export const resolvers = {
 
       const modules = await Module.findAll({
         include: [
-          { model: Reco, as: 'recos' }
+          { model: Reco, as: 'recos', include: [ { model: LogEntry, as: 'logEntries' } ] }
         ]
       });
+
+      for (let i = 0; i < modules.length; i++) {
+        for (let j = 0; j < (modules[i].recos || []).length; j++) {
+          const { logEntries } = modules[i].recos[j];
+          if (logEntries && logEntries.length > 1) {
+            modules[i].recos[j].actionAlert = 10;
+          }
+          if (logEntries && logEntries.length > 2) {
+            modules[i].recos[j].infoAlert = 10;
+          }
+        }
+      }
 
       return modules;
 

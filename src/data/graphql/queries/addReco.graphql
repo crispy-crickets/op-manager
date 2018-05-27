@@ -6,5 +6,8 @@ mutation CreateReco ($reco:RecoInput!) {
     moduleSide
     rowNumber
     slotIndex
+    state
+    actionAlert
+    infoAlert
   }
 }

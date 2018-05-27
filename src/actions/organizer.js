@@ -455,12 +455,13 @@ export function createLogEntry({ logEntry }) {
       dispatch({
         type: CREATE_LOG_SUCCESS,
         payload: {
-          reco: data.createLogEntry,
+          logEntry: data.createLogEntry,
         },
       });
 
       console.log("created log entry", data);
       fetchAllLogEntries(data.createLogEntry.recoId, dispatch, client);
+      fetchAllModules(dispatch, client);
 
       return data.createLogEntry;
 

@@ -1,4 +1,4 @@
-import { Module, Reco } from 'data/models';
+import { Module, Reco, LogEntry } from 'data/models';
 
 export const schema = [
   `
@@ -18,7 +18,9 @@ export const schema = [
     moduleSide: String
     rowNumber: Int
     slotIndex: Int
-    state: String
+    state: String,
+    actionAlert: Int,
+    infoAlert: Int
   }
 `,
 ];

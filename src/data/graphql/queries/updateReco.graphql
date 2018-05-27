@@ -6,5 +6,6 @@ mutation UpdateReco ($reco:UpdateRecoInput!) {
     moduleSide
     rowNumber
     slotIndex
+    state
   }
 }

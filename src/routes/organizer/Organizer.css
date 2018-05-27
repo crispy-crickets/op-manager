@@ -74,7 +74,7 @@
 }
 
 .modules .recoInfo {
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   margin-top: 24px;
 }
 
@@ -227,6 +227,7 @@
 
 .moduleOverview .layout {
   display: flex;
+  margin-bottom: 6px;
 }
 
 .moduleOverview .layout .content {

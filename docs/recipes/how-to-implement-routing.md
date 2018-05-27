@@ -193,17 +193,17 @@ class App extends React.Component {
 ```
 
 Though, it is a common practice to extract that transitioning functionality into a stand-alone
-(`Link`) component that can be used as follows:
+(`TextField`) component that can be used as follows:
 
 ```html
-<Link to="/tasks/123">View Task #123</Link>
+<TextField to="/tasks/123">View Task #123</TextField>
 ```
 
 ### Routing in React Starter Kit
 
 React Starter Kit (RSK) uses [Universal Router](https://github.com/kriasoft/universal-router) npm
 module that is built around the same concepts demonstrated earlier with the major differences that
-it supports nested routes and provides you with the helper `Link` React component. It can be seen as
+it supports nested routes and provides you with the helper `TextField` React component. It can be seen as
 a lightweight more flexible alternative to React Router.
 
 * It has simple code with minimum dependencies (just `path-to-regexp` and `babel-runtime`)

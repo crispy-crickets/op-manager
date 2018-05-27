@@ -80,7 +80,7 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': [
       'error',
       {
-        components: ['Link'],
+        components: ['TextField'],
         specialLink: ['to'],
         aspects: ['noHref', 'invalidHref', 'preferButton'],
       },
@@ -100,7 +100,7 @@ module.exports = {
   },
 
   settings: {
-    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
+    // Allow absolute paths in imports, e.g. import TextField from 'components/TextField'
     // https://github.com/benmosher/eslint-plugin-import/tree/master/resolvers
     'import/resolver': {
       node: {

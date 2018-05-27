@@ -20,6 +20,48 @@
   max-width: var(--max-content-width);
 }
 
+.mainMenu {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  display: flex;
+}
+
+.mainMenu .mainMenuItem {
+  margin-right: 24px;
+
+}
+
+.mainMenu .selected {
+  border-bottom: 4px solid black;
+
+}
+
+.modulesHeader {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modulesHeader .modulesStats {
+  display: flex;
+}
+
+.modulesHeader .modulesStats .statItem {
+  margin-right: 20px;
+}
+
+.modulesHeader .modulesControls {
+
+}
+
+.modulesHeader .modulesControls .addModule {
+  display: flex;
+}
+
+.modulesHeader .modulesControls .hidden {
+  display: none;
+}
+
 .modules {
   margin-top: 24px;
 }
@@ -94,7 +136,7 @@
 }
 
 .moduleSummary .header {
-  border-top: 1px solid #CCC;
+  border-top: 1px solid #ccc;
   display: flex;
   justify-content: space-between;
   width: calc(100% - 32px);
@@ -154,7 +196,7 @@
 .moduleOverview .layout .content .wall .addRow {
   display: flex;
   justify-content: center;
-  border: 1px dashed #CCC;
+  border: 1px dashed #ccc;
 }
 
 .moduleOverview .layout .content .wall .row .slot {
@@ -181,7 +223,7 @@
   padding-bottom: 6px;
   margin-top: 4px;
   margin-bottom: 4px;
-  background-color: #EFEFEF;
+  background-color: #efefef;
 }
 
 .moduleOverview .layout .guide {
@@ -194,7 +236,7 @@
 .moduleOverview .layout .guide .block {
   display: flex;
   transform: rotate(270deg);
-  color: #AAA;
+  color: #aaa;
 }
 
 .moduleOverview .layout .guide .right {

@@ -14,7 +14,7 @@ import s from './Header.css';
 import Link from '../Link';
 import Navigation from '../Navigation';
 import LanguageSwitcher from '../LanguageSwitcher';
-import logoUrl from './logo-small.png';
+import logoUrl from './logo.png';
 import logoUrl2x from './logo-small@2x.png';
 
 const messages = defineMessages({
@@ -40,16 +40,21 @@ class Header extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <Link className={s.brand} to="/">
-            <img
-              src={logoUrl}
-              srcSet={`${logoUrl2x} 2x`}
-              width="38"
-              height="38"
-              alt="React"
-            />
-            <span className={s.brandTxt}>Crispy Crickets</span>
-          </Link>
+          <div className={s.logoCorner}>
+            <div className={s.logoImage}>
+              <Link className={s.brand} to="/">
+                <img
+                  src={logoUrl}
+                  srcSet={`${logoUrl2x} 2x`}
+                  height="60"
+                  alt="Crispy Crickets"
+                />
+              </Link>
+            </div>
+            <div className={s.logoTitle}>
+              <span className={s.brandTxt}>OPERATION</span>
+            </div>
+          </div>
         </div>
       </div>
     );

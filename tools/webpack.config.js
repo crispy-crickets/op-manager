@@ -68,7 +68,7 @@ const config = {
   },
 
   resolve: {
-    // Allow absolute paths in imports, e.g. import Button from 'components/Button'
+    // Allow absolute paths in imports, e.g. import TextField from 'components/TextField'
     // Keep in sync with .flowconfig and .eslintrc
     modules: ['node_modules', 'src'],
   },

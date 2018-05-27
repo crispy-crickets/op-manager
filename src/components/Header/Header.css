@@ -14,14 +14,29 @@
 }
 
 .root {
-  background: #373277;
-  color: #fff;
+  background: #fff;
+  color: #000;
 }
 
 .container {
+  padding-top: 8px;
   margin: 0 auto;
-  padding: 20px 0;
   max-width: var(--max-content-width);
+}
+
+.logoCorner {
+  display: flex;
+}
+
+.logoCorner .logoImage {
+
+}
+
+.logoCorner .logoTitle {
+  margin-top: 16px;
+  font-size: 30px;
+  font-family: 'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif;
+  font-weight: bold;
 }
 
 .brand {
@@ -31,7 +46,6 @@
 }
 
 .brandTxt {
-  margin-left: 10px;
 }
 
 .banner {

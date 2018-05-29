@@ -17,10 +17,6 @@ const routes = {
   children: [
     {
       path: '',
-      load: () => import(/* webpackChunkName: 'home' */ './home'),
-    },
-    {
-      path: '/organizer',
       load: () => import(/* webpackChunkName: 'organizer' */ './organizer'),
     },
     {

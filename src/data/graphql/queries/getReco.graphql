@@ -1,0 +1,28 @@
+query OrganizerReco($id: String!) {
+  getReco(id: $id) {
+    id
+    moduleId
+    name
+    moduleSide
+    rowNumber
+    slotIndex
+    state
+    actionAlert
+    infoAlert
+    requiredActions
+    lifeDays
+    firstPinheads
+    pinheads
+    layingDays
+    logEntries {
+      id
+      recoId
+      type
+      numValue
+      textValue
+      title
+      text
+      createdAt
+    }
+  }
+}

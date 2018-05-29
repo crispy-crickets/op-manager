@@ -1,6 +1,7 @@
-mutation CreateLogEntry ($logEntry:LogEntryInput!) {
-  createLogEntry (logEntry:$logEntry) {
+mutation CreateLogEntry($logEntry: LogEntryInput!) {
+  createLogEntry(logEntry: $logEntry) {
     id
+    createdAt
     recoId
     type
     numValue

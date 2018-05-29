@@ -4,6 +4,7 @@ export const schema = [
   `
   input LogEntryInput {
     id: String
+    createdAt: String
     recoId: String
     type: String
     numValue: Int
@@ -23,16 +24,11 @@ export const mutation = [
 ];
 
 export const resolvers = {
-
   Mutation: {
-
     async createLogEntry(parent, args) {
-
       const logEntry = await LogEntry.create(args.logEntry);
+      console.log('LOG ENTRY CREATE SUCCESS', logEntry);
       return logEntry;
-
-    }
-
+    },
   },
-
 };

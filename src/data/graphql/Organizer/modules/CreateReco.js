@@ -20,7 +20,13 @@ export const schema = [
     slotIndex: Int
     state: String,
     actionAlert: Int,
-    infoAlert: Int
+    infoAlert: Int,
+    requiredActions: String
+    firstPinheads: String
+    pinheads: Int
+    lifeDays: Int
+    layingDays: Int
+    logEntries: [LogEntry]
   }
 `,
 ];
@@ -34,16 +40,10 @@ export const mutation = [
 ];
 
 export const resolvers = {
-
   Mutation: {
-
     async createReco(parent, args) {
-
       const reco = await Reco.create(args.reco);
       return reco;
-
-    }
-
+    },
   },
-
 };

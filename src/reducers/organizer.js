@@ -32,19 +32,22 @@ import {
   GET_LOGS_START,
   GET_LOGS_SUCCESS,
   GET_LOGS_ERROR,
-  SET_VALUE
+  SET_VALUE,
 } from '../constants';
 
 export default function organizer(state = null, action) {
-
-  console.log("org red", state, action);
+  console.log('org red', state, action);
   if (state === null) {
     return {
+      workPlanFeed: true,
+      workPlanWater: true,
+      workPlanTraysIn: true,
+      workPlanTraysOut: true,
+      workPlanHarvest: true,
     };
   }
 
   switch (action.type) {
-
     case SET_VALUE: {
       const newState = { ...state };
       newState[action.payload.name] = action.payload.value;
@@ -63,7 +66,7 @@ export default function organizer(state = null, action) {
       return {
         ...state,
         deletingModule: null,
-        deletedModule: action.payload
+        deletedModule: action.payload,
       };
     }
 
@@ -71,14 +74,14 @@ export default function organizer(state = null, action) {
       return {
         ...state,
         deletingModule: null,
-        deletedModule: null
+        deletedModule: null,
       };
     }
 
     case UPDATE_MODULE_START: {
       return {
         ...state,
-        moduleValues: action.payload.module
+        moduleValues: action.payload.module,
       };
     }
 
@@ -88,14 +91,14 @@ export default function organizer(state = null, action) {
         updatedModule: action.payload.module,
         addRow: false,
         addRowNumber: 1,
-        addRowModuleSide: 'right'
+        addRowModuleSide: 'right',
       };
     }
 
     case UPDATE_MODULE_ERROR: {
       return {
         ...state,
-        updatedModule: null
+        updatedModule: null,
       };
     }
 
@@ -134,7 +137,7 @@ export default function organizer(state = null, action) {
       return {
         ...state,
         deletingReco: null,
-        deletedReco: action.payload
+        deletedReco: action.payload,
       };
     }
 
@@ -142,35 +145,35 @@ export default function organizer(state = null, action) {
       return {
         ...state,
         deletingReco: null,
-        deletedReco: null
+        deletedReco: null,
       };
     }
 
     case UPDATE_RECO_START: {
       return {
         ...state,
-        recoValues: action.payload.reco
+        recoValues: action.payload.reco,
       };
     }
 
     case UPDATE_RECO_SUCCESS: {
       return {
         ...state,
-        updatedReco: action.payload.reco
+        updatedReco: action.payload.reco,
       };
     }
 
     case UPDATE_RECO_ERROR: {
       return {
         ...state,
-        updatedReco: null
+        updatedReco: null,
       };
     }
 
     case ADD_RECO_START: {
       return {
         ...state,
-        newReco: action.payload.reco
+        newReco: action.payload.reco,
       };
     }
 
@@ -202,7 +205,7 @@ export default function organizer(state = null, action) {
       return {
         ...state,
         deletingLogEntry: null,
-        deletedLogEntry: action.payload
+        deletedLogEntry: action.payload,
       };
     }
 
@@ -210,47 +213,48 @@ export default function organizer(state = null, action) {
       return {
         ...state,
         deletingLogEntry: null,
-        deletedLogEntry: null
+        deletedLogEntry: null,
       };
     }
 
     case UPDATE_LOG_START: {
       return {
         ...state,
-        logEntryValues: action.payload.logEntry
+        logEntryValues: action.payload.logEntry,
       };
     }
 
     case UPDATE_LOG_SUCCESS: {
       return {
         ...state,
-        updatedLogEntry: action.payload.logEntry
+        updatedLogEntry: action.payload.logEntry,
       };
     }
 
     case UPDATE_LOG_ERROR: {
       return {
         ...state,
-        updatedLogEntry: null
+        updatedLogEntry: null,
       };
     }
 
     case CREATE_LOG_START: {
       return {
         ...state,
-        newReco: action.payload.logEntry
+        newReco: action.payload.logEntry,
       };
     }
 
     case CREATE_LOG_SUCCESS: {
-      console.log("create log success", action.payload);
+      console.log('create log success', action.payload);
       const { type } = action.payload.logEntry;
       const nextTypes = {
-        'pinheads': ['water', 'Added water'],
-        'water': ['feed', 'Added feed'],
-        'feed': ['water', 'Added water'],
+        pinheads: ['water', 'Added water'],
+        water: ['feed', 'Added feed'],
+        feed: ['water', 'Added water'],
         'egg-tray-in': ['egg-tray-out', 'Removed egg trays'],
         'egg-tray-out': ['egg-tray-in', 'Placed egg trays'],
+        'state-change': ['state-change', 'Changed state'],
       };
       return {
         ...state,
@@ -273,14 +277,49 @@ export default function organizer(state = null, action) {
     case GET_LOGS_START: {
       return {
         ...state,
-        loadingLogEntries: true
+        loadingLogEntries: true,
       };
     }
 
     case GET_LOGS_SUCCESS: {
-      console.log("loaded log entries: ", action.payload.logEntries.length);
+      const { logEntries } = action.payload;
+
+      let defaultValues = {};
+
+      if (logEntries && logEntries.length > 0) {
+        console.log('loaded log entries: ', action.payload.logEntries.length);
+
+        const { type } = logEntries[0];
+        if (type === 'egg-tray-in') {
+          defaultValues = {
+            newLogEntryValue: '2',
+            newLogEntryType: 'egg-tray-out',
+            newLogEntryTitle: 'Removed egg trays',
+          };
+        } else if (type === 'egg-tray-out') {
+          defaultValues = {
+            newLogEntryValue: '2',
+            newLogEntryType: 'egg-tray-in',
+            newLogEntryTitle: 'Placed egg trays',
+          };
+        } else if (type === 'water') {
+          defaultValues = {
+            newLogEntryValue: '10',
+            newLogEntryType: 'feed',
+            newLogEntryTitle: 'Added feed',
+          };
+        } else if (type === 'feed') {
+          defaultValues = {
+            newLogEntryValue: '10',
+            newLogEntryType: 'water',
+            newLogEntryTitle: 'Added water',
+          };
+        }
+      }
+
       return {
         ...state,
+        ...defaultValues,
         loadingLogEntries: false,
         logEntries: action.payload.logEntries,
       };
@@ -297,12 +336,12 @@ export default function organizer(state = null, action) {
     case GET_MODULES_START: {
       return {
         ...state,
-        loadingModules: true
+        loadingModules: true,
       };
     }
 
     case GET_MODULES_SUCCESS: {
-      console.log("loaded modules: ", action.payload.modules.length);
+      // console.log("loaded modules: ", action.payload.modules.length);
       return {
         ...state,
         loadingModules: false,
@@ -321,6 +360,5 @@ export default function organizer(state = null, action) {
     default: {
       return state;
     }
-
   }
 }

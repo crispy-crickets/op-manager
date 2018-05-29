@@ -15,6 +15,11 @@ query OrganizerModules {
       state
       actionAlert
       infoAlert
+      requiredActions
+      lifeDays
+      firstPinheads
+      pinheads
+      layingDays
     }
   }
 }

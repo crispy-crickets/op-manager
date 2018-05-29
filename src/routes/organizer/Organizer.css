@@ -55,7 +55,17 @@
 
 }
 
-.modulesHeader .modulesControls .addModule {
+.modulesControls .controlSwitches {
+  display: flex;
+}
+
+.controlSwitches .workPlanControl {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.controlSwitches .addModule {
   height: 23px;
   display: flex;
   align-items: center;
@@ -65,7 +75,40 @@
   margin-right: 6px;
 }
 
-.modulesHeader .modulesControls .hidden {
+.workPlan {
+  width: 100%;
+  margin-top: 24px;
+  position: relative;
+}
+
+.workPlan .closeWorkPlan {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.workPlan .checkBoxes {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.workPlan .checkBoxes .checkBoxItem {
+  display: flex;
+  padding: 10px;
+  align-items: center;
+}
+
+.workPlan .checkBoxes .checkBoxItem .label {
+  margin-left: 6px;
+}
+
+.workPlan .checkBoxes .checkBoxItem input {
+  width: 16px;
+  height: 16px;
+}
+
+.controlSwitches .hidden {
   display: none;
 }
 
@@ -163,10 +206,11 @@
 }
 
 .recoInfo .stripeBg {
-  background-color: #ECECEC;
+  background-color: #ececec;
 }
 
 .moduleSummary {
+  margin-top: 24px;
 }
 
 .moduleSummary .header {
@@ -209,13 +253,17 @@
 .moduleOverview {
   margin-top: 16px;
   max-height: 0;
-  transition: max-height 0.75s ease-out;
+  transition: max-height 0.5s ease-out;
   overflow: hidden;
+}
+
+.allowOverflow {
+  overflow: visible;
 }
 
 .expanded {
   max-height: 1000px;
-  transition: max-height 0.75s ease-in;
+  transition: max-height 0.5s ease-in;
 }
 
 .moduleOverview .controls {
@@ -267,11 +315,21 @@
 }
 
 .slot .reco {
+  position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: width 0.25s ease-in, height 0.25s ease-in;
+  z-index: 1;
+}
+
+.reco:hover {
+  z-index: 2;
+  width: 140%;
+  height: 140%;
+  border: 1px solid #888;
 }
 
 .slot .recoNew {
@@ -279,27 +337,195 @@
 }
 
 .slot .recoSelected {
-  border: 3px solid black;
+  border: 3px solid rgba(0, 0, 0, 1);
   position: absolute;
-  width: 140%;
-  height: 140%;
-  z-index: 1;
+  width: 200px;
+  height: 300px;
+  transition: width 0.25s ease-out, height 0.25s ease-out;
+  align-items: flex-start;
+  z-index: 4;
 }
+
 
 .reco .recoContent {
   width: 100%;
   height: calc(100% - 8px);
   display: flex;
-  align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 3;
+  position: relative;
+}
+
+.recoContent .notSelected {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.recoContent .contentWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.contentWrapper .recoContentHeader {
+  margin-top: -4px;
+  height: 30px;
+  width: 100%;
+  border-bottom: 1px solid #000;
+}
+
+.recoContentHeader .growHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.recoContentHeader .layingHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.layingHeader .eggDays {
+  flex-grow: 1;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.layingHeader .lifeDays {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #8a8;
+  border-left: 1px solid #000;
+}
+
+.contentWrapper .requiredActions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.contentWrapper .requiredActions .requiredAction {
+  width: calc(100% - 8px);
+  height: 30px;
+  border: 1px solid #888;
+  margin-top: 2px;
+  font-size: 14px;
+  align-items: center;
+  padding-left: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.contentWrapper .requiredActions .requiredAction .actionLabel {
+  margin-left: 6px;
+}
+
+.contentWrapper .requiredActions .requiredAction .actionCheckbox {
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.contentWrapper .requiredActions .requiredAction .actionCheckbox input {
+  width: 20px;
+  height: 20px;
+}
+
+.contentWrapper .deleteReco {
+  cursor: pointer;
+  position: absolute;
+  background-color: #000;
+  color: #fff;
+  bottom: -4px;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contentWrapper .contentBottom {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.contentWrapper .contentBottom .pinheads {
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.contentWrapper .qrCode {
+  cursor: pointer;
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+}
+
+.contentWrapper .qrCode img {
+  width: 30px;
+}
+
+.contentWrapper .largeQr {
+  display: flex;
+  width: 176px;
+  height: 176px;
+  -ms-flex-pack: center;
+  justify-content: center;
+  position: absolute;
+  top: 8px;
+  left: 12px;
+}
+
+.contentWrapper .largeQr .closeLargeQr {
+  cursor: pointer;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f63;
+  border: 1px solid #000;
+  border-radius: 10px;
+}
+
+.contentWrapper .largeQr img {
+  width: 100%;
+}
+
+.contentWrapper .recoStats {
+}
+
+.contentWrapper .recoStats .stat {
+}
+
+.contentWrapper .pendingActions {
+}
+
+.contentWrapper .pendingActions .action {
 }
 
 .reco .growing {
-  background-color: #88AA88;
+  background-color: #8a8;
   color: black;
-  border-top: 4px solid #88AA88;
-  border-bottom: 4px solid #88AA88;
+  border-top: 4px solid #8a8;
+  border-bottom: 4px solid #8a8;
 }
 
 .reco .laying {
@@ -309,12 +535,19 @@
   border-bottom: 4px solid goldenrod;
 }
 
+.reco .empty {
+  background-color: #ccc;
+  color: black;
+  border-top: 4px solid #ccc;
+  border-bottom: 4px solid #ccc;
+}
+
 .reco .actionAlert {
-  border-top: 4px solid #AA4444;
+  border-top: 4px solid #a44;
 }
 
 .reco .infoAlert {
-  border-bottom: 4px solid #00BFFF;
+  border-bottom: 4px solid #00bfff;
 }
 
 .moduleOverview .layout .content .corridor {

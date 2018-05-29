@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import { FormattedRelative } from 'react-intl';
 import { graphql, compose } from 'react-apollo';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import QRCode from 'qrcode';
 import modulesQuery from '../../data/graphql/queries/getModules.graphql';
 import s from './Organizer.css';
 import cx from 'classnames';
@@ -45,6 +46,17 @@ class Organizer extends React.Component {
     }).isRequired,
   };
 
+  async generateQR(text, size) {
+    try {
+      const dataUrl = await QRCode.toDataURL(text, { width: size });
+      console.log(dataUrl);
+      return dataUrl;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  }
+
   moveAddRow(change) {
     const { setValue, addRowNumber } = this.props;
     setValue('addRowNumber', addRowNumber + change);
@@ -76,6 +88,79 @@ class Organizer extends React.Component {
     return null;
   }
 
+  getWorkPlanStyles(reco) {
+    const {
+      showWorkPlan,
+      workPlanFeed,
+      workPlanWater,
+      workPlanTraysIn,
+      workPlanTraysOut,
+      workPlanHarvest,
+    } = this.props;
+
+    const displayActions = {
+      feed: workPlanFeed,
+      water: workPlanWater,
+      traysIn: workPlanTraysIn,
+      traysOut: workPlanTraysOut,
+      harvest: workPlanHarvest,
+    };
+
+    if (!reco) {
+      return null;
+    }
+
+    const requiredActions = (reco.requiredActions || '').split(',');
+    const matchingActions = requiredActions.filter(
+      action => displayActions[action],
+    );
+
+    if (!showWorkPlan || matchingActions.length === 0) {
+      return null;
+    }
+
+    const workPlanColors = {
+      feed: '#DEB887',
+      water: '#00BFFF',
+      traysIn: '#90EE90',
+      traysOut: '#FFB6C1',
+      harvest: '',
+    };
+
+    let backgroundStyle = {};
+    if (matchingActions.length === 1) {
+      backgroundStyle = {
+        backgroundColor: workPlanColors[matchingActions[0]],
+      };
+    } else if (matchingActions.length === 2) {
+      backgroundStyle = {
+        background: `linear-gradient(180deg, ${
+          workPlanColors[matchingActions[0]]
+        } 0, ${workPlanColors[matchingActions[0]]} 50%, ${
+          workPlanColors[matchingActions[1]]
+        } 50%, ${workPlanColors[matchingActions[1]]} 100%)`,
+      };
+    } else {
+      backgroundStyle = {
+        background: `linear-gradient(180deg, ${
+          workPlanColors[matchingActions[0]]
+        } 0, ${workPlanColors[matchingActions[0]]} 33%, ${
+          workPlanColors[matchingActions[1]]
+        } 33%, ${workPlanColors[matchingActions[1]]} 66%, ${
+          workPlanColors[matchingActions[2]]
+        } 66%, ${workPlanColors[matchingActions[2]]} 100%)`,
+      };
+    }
+
+    const workPlanStyles = {
+      ...backgroundStyle,
+    };
+
+    console.log('req actions', matchingActions, workPlanStyles);
+
+    return workPlanStyles;
+  }
+
   renderRow(
     module,
     moduleSide,
@@ -85,27 +170,31 @@ class Organizer extends React.Component {
     addRowNumber,
     recos,
   ) {
-    const { addReco, selectedReco, getAllLogEntries, setValue } = this.props;
+    const {
+      addReco,
+      deleteReco,
+      selectedReco,
+      getAllLogEntries,
+      createLogEntry,
+      setValue,
+      showWorkPlan,
+      selectedRecoQr,
+      showLargeQr,
+      workPlanFeed,
+      workPlanWater,
+      workPlanTraysIn,
+      workPlanTraysOut,
+      workPlanHarvest,
+    } = this.props;
 
     const slots = [];
     for (let i = 0; i < module.size; i++) {
       slots.push({ index: i });
     }
 
-    console.log('row count?', moduleSide, module.rowsRight, module.rowsLeft);
     const rowCount =
       moduleSide === 'right' ? module.rowsRight : module.rowsLeft;
 
-    console.log(
-      'render row',
-      module,
-      addRow,
-      moduleSide,
-      addRowModuleSide,
-      rowCount,
-      addRowNumber,
-      rowNumber,
-    );
     if (addRow && moduleSide === addRowModuleSide && rowCount === 0) {
       return (
         <div className={cx(s.row, s.addRow)}>
@@ -161,37 +250,228 @@ class Organizer extends React.Component {
               slotIndex,
             );
 
-            const recoSelected = (reco && selectedReco && selectedReco.id === reco.id);
+            const recoSelected =
+              reco && selectedReco && selectedReco.id === reco.id;
             const stateStyles = {
-              'growing': s.growing,
-              'laying': s.laying
+              empty: s.empty,
+              growing: s.growing,
+              laying: s.laying,
             };
+
+            const workPlanStyles = this.getWorkPlanStyles(reco);
+
+            let requiredActions = [];
+            if (reco && reco.requiredActions) {
+              requiredActions = reco.requiredActions.split(',');
+            }
+
+            const actionLabels = {
+              pinheads: {
+                type: 'pinheads',
+                value: 10,
+                label: 'Add pinheads',
+                color: '#FFF',
+              },
+              feed: {
+                type: 'feed',
+                value: 10,
+                label: 'Add feed',
+                color: '#DEB887',
+              },
+              water: {
+                type: 'water',
+                value: 10,
+                label: 'Add water',
+                color: '#00BFFF',
+              },
+              traysIn: {
+                type: 'egg-tray-in',
+                value: 2,
+                label: 'Place egg trays',
+                color: '#90EE90',
+              },
+              traysOut: {
+                type: 'egg-tray-out',
+                value: 2,
+                label: 'Remove egg trays',
+                color: '#FFB6C1',
+              },
+              harvest: {
+                type: 'harvest',
+                value: 1900,
+                label: 'Harvest',
+                color: '',
+              },
+            };
+
+            let pinheadsText = '';
+
+            if (reco) {
+              if (reco.firstPinheads) {
+                const firstPinheads = new Date(reco.firstPinheads);
+                pinheadsText = `${firstPinheads.getDate()}.${firstPinheads.getMonth() +
+                  1} - `;
+              }
+
+              pinheadsText += `${reco.pinheads} ml`;
+            }
 
             const recoElem = reco ? (
               <div
                 className={cx(s.reco, recoSelected ? s.recoSelected : {})}
-                onClick={recoSelected ? () => setValue('selectedReco', null) : () => {
-                  setValue('selectedReco', reco);
-                  setValue('newLogEntryType', 'pinheads');
-                  setValue('newLogEntryTitle', 'Added pinheads');
-                  getAllLogEntries(reco.id);
-                }}
+                style={workPlanStyles || {}}
+                onClick={
+                  recoSelected
+                    ? () => setValue('selectedReco', null)
+                    : async e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setValue(
+                          'selectedRecoQr',
+                          await this.generateQR(
+                            `http://ops.crispycrickets.fi:3000/reco/${reco.id}`,
+                            40,
+                          ),
+                        );
+                        setValue('selectedReco', reco);
+                        setValue('newLogEntryType', 'pinheads');
+                        setValue('newLogEntryTitle', 'Added pinheads');
+                        setValue('newLogEntryDate', '');
+                        setValue('newLogEntryValue', '10');
+                        getAllLogEntries(reco.id);
+                      }
+                }
               >
-                <div className={cx(s.recoContent, reco.actionAlert ? s.actionAlert : {}, reco.infoAlert ? s.infoAlert : {}, stateStyles[reco.state])}>
-                  {reco.slotIndex + 1}
+                <div
+                  className={cx(
+                    s.recoContent,
+                    reco.actionAlert ? s.actionAlert : {},
+                    reco.infoAlert ? s.infoAlert : {},
+                    stateStyles[reco.state],
+                  )}
+                  style={
+                    showWorkPlan && !recoSelected
+                      ? {
+                          height: '100%',
+                          border: 'none',
+                          backgroundColor: workPlanStyles
+                            ? 'transparent'
+                            : '#CCC',
+                        }
+                      : {}
+                  }
+                >
+                  {recoSelected ? (
+                    <div className={s.contentWrapper}>
+                      {reco.state !== 'empty' && (
+                        <div className={s.recoContentHeader}>
+                          {reco.state === 'growing' && (
+                            <div className={s.growHeader}>
+                              GROW DAY {reco.lifeDays}
+                            </div>
+                          )}
+                          {reco.state === 'laying' && (
+                            <div className={s.layingHeader}>
+                              <div className={s.eggDays}>
+                                EGG DAY {reco.layingDays}
+                              </div>
+                              <div className={s.lifeDays}>{reco.lifeDays}</div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className={s.requiredActions}>
+                        {requiredActions.map(action => (
+                          <div
+                            className={s.requiredAction}
+                            style={{
+                              backgroundColor: actionLabels[action].color,
+                            }}
+                          >
+                            <div className={s.actionLabel}>
+                              {actionLabels[action].label}
+                            </div>
+                            <div className={s.actionCheckbox}>
+                              <input
+                                type="checkbox"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  createLogEntry({
+                                    logEntry: {
+                                      recoId: reco.id,
+                                      type: actionLabels[action].type,
+                                      title: actionLabels[action].label,
+                                      numValue: actionLabels[action].value,
+                                    },
+                                  });
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className={s.contentBottom}>
+                        <div className={s.pinheads}>{pinheadsText}</div>
+                      </div>
+                      {showLargeQr && (
+                        <div className={s.largeQr}>
+                          <img src={showLargeQr} />
+                          <div
+                            className={s.closeLargeQr}
+                            onClick={e => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setValue('showLargeQr', null);
+                            }}
+                          >
+                            x
+                          </div>
+                        </div>
+                      )}
+                      <div
+                        className={s.qrCode}
+                        onClick={async e => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setValue(
+                            'showLargeQr',
+                            await this.generateQR(
+                              `http://ops.crispycrickets.fi:3000/reco/${
+                                reco.id
+                              }`,
+                              200,
+                            ),
+                          );
+                        }}
+                      >
+                        <img src={selectedRecoQr} />
+                      </div>
+                      <div
+                        className={s.deleteReco}
+                        onClick={() => deleteReco(reco.id)}
+                      >
+                        D
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={s.notSelected}>{reco.slotIndex + 1}</div>
+                  )}
                 </div>
               </div>
             ) : (
-              <div className={s.emptySlot} onClick={() =>
-                addReco({
-                  reco: {
-                    moduleId: module.id,
-                    moduleSide,
-                    rowNumber: slotRowNumber,
-                    slotIndex,
-                  },
-                })
-              }>
+              <div
+                className={s.emptySlot}
+                onClick={() =>
+                  addReco({
+                    reco: {
+                      moduleId: module.id,
+                      moduleSide,
+                      rowNumber: slotRowNumber,
+                      slotIndex,
+                    },
+                  })
+                }
+              >
                 {slotIndex + 1}
               </div>
             );
@@ -231,6 +511,11 @@ class Organizer extends React.Component {
       1} ${date.getHours()}:${date.getMinutes()}`;
   }
 
+  moduleSelected(id) {
+    const { selectedModules } = this.props;
+    return (selectedModules || []).includes(id);
+  }
+
   render() {
     const {
       addModule,
@@ -238,6 +523,7 @@ class Organizer extends React.Component {
       updateReco,
       deleteModule,
       showAddModule,
+      showWorkPlan,
       setValue,
       createLogEntry,
       deleteLogEntry,
@@ -248,19 +534,25 @@ class Organizer extends React.Component {
       module,
       modules,
       loadingModules,
-      selectedModule,
+      selectedModules,
       logEntries,
       addRow,
       addRowNumber,
       addRowModuleSide,
       moduleValues,
       updatedModule,
+      newLogEntryDate,
       newLogEntryType,
       newLogEntryValue,
       newLogEntryTitle,
       newLogEntryText,
       newRecoState,
       selectedReco,
+      workPlanFeed,
+      workPlanWater,
+      workPlanTraysIn,
+      workPlanTraysOut,
+      workPlanHarvest,
       data: { loading, getAllModules },
     } = this.props;
 
@@ -286,46 +578,137 @@ class Organizer extends React.Component {
               </div>
             </div>
             <div className={s.modulesControls}>
-              <div className={cx(s.addModule, showAddModule ? s.hidden : {})}>
-                <a href="#" onClick={() => setValue('showAddModule', true)}>
-                  New module
-                </a>
-              </div>
-              <div className={cx(s.addModule, !showAddModule ? s.hidden : {})}>
-                <div className={s.textField}>
-                  <TextField
-                    label="Size"
-                    value={newModuleSize || ''}
-                    onChange={e => {
-                      setValue('newModuleSize', e.target.value);
+              <div className={s.controlSwitches}>
+                {!showWorkPlan && (
+                  <div className={cx(s.workPlanControl)}>
+                    <a href="#" onClick={() => setValue('showWorkPlan', true)}>
+                      Work plan
+                    </a>
+                  </div>
+                )}
+                <div className={cx(s.addModule, showAddModule ? s.hidden : {})}>
+                  <a href="#" onClick={() => setValue('showAddModule', true)}>
+                    New module
+                  </a>
+                </div>
+                <div
+                  className={cx(s.addModule, !showAddModule ? s.hidden : {})}
+                >
+                  <div className={s.textField}>
+                    <TextField
+                      label="Size"
+                      value={newModuleSize || ''}
+                      onChange={e => {
+                        setValue('newModuleSize', e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div className={s.textField}>
+                    <TextField
+                      label="Name"
+                      value={newModuleName || ''}
+                      onChange={e => {
+                        setValue('newModuleName', e.target.value);
+                      }}
+                    />
+                  </div>
+                  <Button
+                    label="Add"
+                    onClick={() => {
+                      addModule({
+                        module: {
+                          name: newModuleName,
+                          size: parseInt(newModuleSize),
+                        },
+                      });
                     }}
                   />
-                </div>
-                <div className={s.textField}>
-                  <TextField
-                    label="Name"
-                    value={newModuleName || ''}
-                    onChange={e => {
-                      setValue('newModuleName', e.target.value);
-                    }}
+                  &nbsp;
+                  <Button
+                    label="Cancel"
+                    onClick={() => setValue('showAddModule', false)}
                   />
                 </div>
-                <Button
-                  label="Add"
-                  onClick={() => {
-                    addModule({
-                      module: {
-                        name: newModuleName,
-                        size: parseInt(newModuleSize),
-                      },
-                    });
-                  }}
-                />
-                &nbsp;
-                <Button label="Cancel" onClick={() => setValue('showAddModule', false)} />
               </div>
             </div>
           </div>
+
+          {showWorkPlan && (
+            <div className={s.workPlan}>
+              <div className={s.checkBoxes}>
+                <div
+                  className={s.checkBoxItem}
+                  style={{ backgroundColor: '#DEB887' }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={workPlanFeed || false}
+                    onChange={e => {
+                      setValue('workPlanFeed', !workPlanFeed);
+                    }}
+                  />
+                  <div className={s.label}>Feed</div>
+                </div>
+                <div
+                  className={s.checkBoxItem}
+                  style={{ backgroundColor: '#00BFFF' }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={workPlanWater || false}
+                    onChange={e => {
+                      setValue('workPlanWater', !workPlanWater);
+                    }}
+                  />
+                  <div className={s.label}>Water</div>
+                </div>
+                <div
+                  className={s.checkBoxItem}
+                  style={{ backgroundColor: '#90EE90' }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={workPlanTraysIn || false}
+                    onChange={e => {
+                      setValue('workPlanTraysIn', !workPlanTraysIn);
+                    }}
+                  />
+                  <div className={s.label}>Egg tray in</div>
+                </div>
+                <div
+                  className={s.checkBoxItem}
+                  style={{ backgroundColor: '#FFB6C1' }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={workPlanTraysOut || false}
+                    onChange={e => {
+                      setValue('workPlanTraysOut', !workPlanTraysOut);
+                    }}
+                  />
+                  <div className={s.label}>Egg tray out</div>
+                </div>
+                <div
+                  className={s.checkBoxItem}
+                  style={{ backgroundColor: '#FFD700' }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={workPlanHarvest || false}
+                    onChange={e => {
+                      setValue('workPlanHarvest', !workPlanHarvest);
+                    }}
+                  />
+                  <div className={s.label}>Harvest</div>
+                </div>
+              </div>
+              <div className={s.closeWorkPlan}>
+                <a href="#" onClick={() => setValue('showWorkPlan', false)}>
+                  Close
+                </a>
+              </div>
+            </div>
+          )}
 
           {false ? (
             'Loading...'
@@ -362,19 +745,11 @@ class Organizer extends React.Component {
                   );
                 }
 
-                console.log(
-                  'addd row?',
-                  addRow,
-                  addRowModuleSide,
-                  module.rowsRight,
-                  module.rowsLeft,
-                );
                 if (
                   addRow &&
                   addRowModuleSide === 'right' &&
                   module.rowsRight === 0
                 ) {
-                  console.log('push to right');
                   rightRows.push(
                     this.renderRow(
                       module,
@@ -393,7 +768,6 @@ class Organizer extends React.Component {
                   addRowModuleSide === 'left' &&
                   module.rowsLeft === 0
                 ) {
-                  console.log('push to left');
                   leftRows.push(
                     this.renderRow(
                       module,
@@ -408,35 +782,53 @@ class Organizer extends React.Component {
                 }
 
                 const typeUnits = {
-                  'pinheads': 'ml',
-                  'feed': 'kg',
-                  'water': 'l',
+                  pinheads: 'ml',
+                  feed: 'kg',
+                  water: 'l',
                   'egg-tray-in': 'tray(s)',
                   'egg-tray-out': 'tray(s)',
-                  'state-change': ''
+                  'state-change': '',
                 };
 
                 const defaultTitles = {
-                  'pinheads': 'Added pinheads',
-                  'feed': 'Added feed',
-                  'water': 'Added water',
+                  pinheads: 'Added pinheads',
+                  feed: 'Added feed',
+                  water: 'Added water',
                   'egg-tray-in': 'Placed egg trays',
                   'egg-tray-out': 'Removed egg trays',
-                  'state-change': 'Changed state'
+                  'state-change': 'Changed state',
                 };
 
                 return (
                   <div key={module.id}>
-                    <div
-                      className={cx(
-                        s.moduleSummary
-                      )}
-                    >
+                    <div className={cx(s.moduleSummary)}>
                       <div className={s.header}>
                         <div className={s.name}>
                           <a
                             href="#"
-                            onClick={ !selectedModule ? () => setValue('selectedModule', module.id) : () => setValue('selectedModule', null) }
+                            onClick={
+                              !this.moduleSelected(module.id)
+                                ? () => {
+                                    const newSelectedModules =
+                                      selectedModules || [];
+                                    newSelectedModules.push(module.id);
+                                    setValue(
+                                      'selectedModules',
+                                      newSelectedModules,
+                                    );
+                                    setValue('selectedModule', module.id);
+                                  }
+                                : () => {
+                                    const newSelectedModules = selectedModules.filter(
+                                      id => id !== module.id,
+                                    );
+                                    setValue(
+                                      'selectedModules',
+                                      newSelectedModules,
+                                    );
+                                    setValue('selectedModule', Math.random());
+                                  }
+                            }
                           >
                             {module.name}
                           </a>
@@ -452,8 +844,18 @@ class Organizer extends React.Component {
                           </a>
                         </div>
                       </div>
-                      {(
-                        <div className={cx(s.moduleOverview, module.id === selectedModule ? s.expanded : {})}>
+                      {
+                        <div
+                          className={cx(
+                            s.moduleOverview,
+                            this.moduleSelected(module.id)
+                              ? cx(
+                                  s.expanded,
+                                  selectedReco ? s.allowOverflow : {},
+                                )
+                              : {},
+                          )}
+                        >
                           <div className={s.controls}>
                             {addRow ? (
                               <div>
@@ -510,132 +912,157 @@ class Organizer extends React.Component {
                             </div>
                           </div>
                         </div>
-                      )}
+                      }
                     </div>
-                    {(selectedReco && selectedModule && selectedModule === module.id) && (
-                      <div className={s.recoInfo}>
-                        <div className={s.logEntry}>
-                          <div className={s.logEntryRow1}>
-                            <div className={s.logEntryRight}>
-                              <select
-                                value={newLogEntryType}
-                                onChange={e => {
-                                  setValue('newLogEntryType', e.target.value);
-                                  setValue(
-                                    'newLogEntryTitle',
-                                    defaultTitles[e.target.value],
-                                  );
-                                }}
-                              >
-                                <option value="pinheads">Pinheads</option>
-                                <option value="feed">Feed</option>
-                                <option value="water">Water</option>
-                                <option value="egg-tray-in">Egg tray in</option>
-                                <option value="egg-tray-out">
-                                  Egg tray out
-                                </option>
-                                <option value="state-change">State</option>
-                              </select>&nbsp;
-                              <TextField
-                                label={'Title'}
-                                value={newLogEntryTitle}
-                                onChange={e =>
-                                  setValue('newLogEntryTitle', e.target.value)
-                                }
-                              />
-                            </div>
-                            <div className={s.logEntryValue}>
-                              {
-                                (newLogEntryType === 'state-change') ?
+                    {selectedReco &&
+                      this.moduleSelected(module.id) && (
+                        <div className={s.recoInfo}>
+                          <div className={s.logEntry}>
+                            <div className={s.logEntryRow1}>
+                              <div className={s.logEntryRight}>
+                                <select
+                                  value={newLogEntryType}
+                                  onChange={e => {
+                                    setValue('newLogEntryType', e.target.value);
+                                    setValue(
+                                      'newLogEntryTitle',
+                                      defaultTitles[e.target.value],
+                                    );
+                                  }}
+                                >
+                                  <option value="pinheads">Pinheads</option>
+                                  <option value="feed">Feed</option>
+                                  <option value="water">Water</option>
+                                  <option value="egg-tray-in">
+                                    Egg tray in
+                                  </option>
+                                  <option value="egg-tray-out">
+                                    Egg tray out
+                                  </option>
+                                  <option value="state-change">State</option>
+                                </select>&nbsp;
+                                <TextField
+                                  label="Title"
+                                  value={newLogEntryTitle}
+                                  onChange={e =>
+                                    setValue('newLogEntryTitle', e.target.value)
+                                  }
+                                />&nbsp;
+                                <TextField
+                                  label="Date"
+                                  value={newLogEntryDate}
+                                  onChange={e =>
+                                    setValue('newLogEntryDate', e.target.value)
+                                  }
+                                />
+                              </div>
+                              <div className={s.logEntryValue}>
+                                {newLogEntryType === 'state-change' ? (
                                   <select
                                     value={newRecoState || selectedReco.state}
                                     onChange={e => {
                                       setValue('newRecoState', e.target.value);
-                                    }}>
+                                    }}
+                                  >
                                     <option value="growing">Growing</option>
                                     <option value="laying">Laying</option>
-                                  </select> :
+                                  </select>
+                                ) : (
                                   <div>
                                     <TextField
                                       className={s.logEntryValueInput}
-                                      label={'Value'}
+                                      label="Value"
                                       value={newLogEntryValue}
                                       onChange={e =>
-                                        setValue('newLogEntryValue', e.target.value)
+                                        setValue(
+                                          'newLogEntryValue',
+                                          e.target.value,
+                                        )
                                       }
                                     />&nbsp;
                                     {typeUnits[newLogEntryType]}
                                   </div>
-                              }
-                            </div>
-                          </div>
-                          <div className={s.logEntryText}>
-                            <TextField className={s.logEntryTextInput}
-                              label={'Notes'}
-                              value={newLogEntryText}
-                              onChange={e =>
-                                setValue('newLogEntryText', e.target.value)
-                              }
-                            />
-                            <Button
-                              className={s.logEntrySubmit}
-                              label={'Add'}
-                              onClick={() => {
-
-                                const logEntry = {
-                                  recoId: selectedReco.id,
-                                  type: newLogEntryType,
-                                  title: newLogEntryTitle,
-                                  text: newLogEntryText,
-                                };
-
-                                console.log('saving log entry', logEntry);
-                                try {
-                                  const numValue = parseInt(newLogEntryValue);
-                                  logEntry.numValue = numValue;
-                                } catch (err) {
-                                  logEntry.textValue = newLogEntryValue;
-                                }
-                                createLogEntry({ logEntry });
-                                console.log("new log entry", newLogEntryType);
-                                if (newLogEntryType === 'state-change') {
-                                  updateReco({
-                                    reco: { id: selectedReco.id, values: { state: newRecoState } },
-                                  });
-                                }
-
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          {(
-                            logEntries ||
-                            this.props.data.getAllLogEntries ||
-                            []
-                          ).map((logEntry, index) => (
-                            <div className={cx(s.logItem, index % 2 !== 0 ? s.stripeBg : {})}>
-                              <div className={s.left}>
-                                <div className={s.logItemDate}>
-                                  {this.formatLogItemDate(logEntry.createdAt)}
-                                </div>
-                                <div className={s.logItemTitle}>
-                                  {logEntry.title || logEntry.type}
-                                </div>
-                                <div className={s.logItemValue}>
-                                  {logEntry.numValue || logEntry.textValue}
-                                </div>
-                              </div>
-                              <div className={s.right}>
-                                <div className={s.logItemText}>
-                                  {logEntry.text}
-                                </div>
+                                )}
                               </div>
                             </div>
-                          ))}
+                            <div className={s.logEntryText}>
+                              <TextField
+                                className={s.logEntryTextInput}
+                                label="Notes"
+                                value={newLogEntryText}
+                                onChange={e =>
+                                  setValue('newLogEntryText', e.target.value)
+                                }
+                              />
+                              <Button
+                                className={s.logEntrySubmit}
+                                label="Add"
+                                onClick={() => {
+                                  const logEntry = {
+                                    recoId: selectedReco.id,
+                                    type: newLogEntryType,
+                                    title: newLogEntryTitle,
+                                    text: newLogEntryText,
+                                  };
+
+                                  if (newLogEntryDate) {
+                                    logEntry.createdAt = newLogEntryDate;
+                                  }
+
+                                  console.log('saving log entry', logEntry);
+                                  try {
+                                    const numValue = parseInt(newLogEntryValue);
+                                    logEntry.numValue = numValue;
+                                  } catch (err) {
+                                    logEntry.textValue = newLogEntryValue;
+                                  }
+                                  createLogEntry({ logEntry });
+                                  console.log('new log entry', newLogEntryType);
+                                  if (newLogEntryType === 'state-change') {
+                                    updateReco({
+                                      reco: {
+                                        id: selectedReco.id,
+                                        values: { state: newRecoState },
+                                      },
+                                    });
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            {(
+                              logEntries ||
+                              this.props.data.getAllLogEntries ||
+                              []
+                            ).map((logEntry, index) => (
+                              <div
+                                className={cx(
+                                  s.logItem,
+                                  index % 2 !== 0 ? s.stripeBg : {},
+                                )}
+                              >
+                                <div className={s.left}>
+                                  <div className={s.logItemDate}>
+                                    {this.formatLogItemDate(logEntry.createdAt)}
+                                  </div>
+                                  <div className={s.logItemTitle}>
+                                    {logEntry.title || logEntry.type}
+                                  </div>
+                                  <div className={s.logItemValue}>
+                                    {logEntry.numValue || logEntry.textValue}
+                                  </div>
+                                </div>
+                                <div className={s.right}>
+                                  <div className={s.logItemText}>
+                                    {logEntry.text}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 );
               })}

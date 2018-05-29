@@ -37,4 +37,7 @@ export const GET_MODULES_ERROR = 'GET_MODULES_ERROR';
 export const GET_LOGS_START = 'GET_LOGS_START';
 export const GET_LOGS_SUCCESS = 'GET_LOGS_SUCCESS';
 export const GET_LOGS_ERROR = 'GET_LOGS_ERROR';
+export const GET_RECO_START = 'GET_RECO_START';
+export const GET_RECO_SUCCESS = 'GET_RECO_SUCCESS';
+export const GET_RECO_ERROR = 'GET_RECO_ERROR';
 export const SET_VALUE = 'SET_VALUE';

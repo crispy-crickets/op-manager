@@ -32,6 +32,9 @@ import {
   GET_LOGS_START,
   GET_LOGS_SUCCESS,
   GET_LOGS_ERROR,
+  GET_RECO_START,
+  GET_RECO_SUCCESS,
+  GET_RECO_ERROR,
   SET_VALUE,
 } from '../constants';
 
@@ -333,6 +336,29 @@ export default function organizer(state = null, action) {
         ...state,
         loadingLogEntries: false,
         logEntries: null,
+      };
+    }
+
+    case GET_RECO_START: {
+      return {
+        ...state,
+        loadingReco: true,
+      };
+    }
+
+    case GET_RECO_SUCCESS: {
+      return {
+        ...state,
+        loadingReco: false,
+        reco: action.payload.reco,
+      };
+    }
+
+    case GET_RECO_ERROR: {
+      return {
+        ...state,
+        loadingReco: false,
+        reco: null,
       };
     }
 

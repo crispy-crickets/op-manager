@@ -322,17 +322,25 @@ class Organizer extends React.Component {
                 style={workPlanStyles || {}}
                 onClick={
                   recoSelected
-                    ? () => setValue('selectedReco', null)
+                    ? () => {
+                      setValue('showLargeQr', null);
+                      setValue('selectedReco', null);
+                    }
                     : async e => {
+
                         e.preventDefault();
                         e.stopPropagation();
+
+                        const qrData = await this.generateQR(
+                          `http://ops.crispycrickets.fi:3000/reco/${reco.id}`,
+                          40,
+                        );
+
                         setValue(
                           'selectedRecoQr',
-                          await this.generateQR(
-                            `http://ops.crispycrickets.fi:3000/reco/${reco.id}`,
-                            40,
-                          ),
+                          qrData,
                         );
+
                         setValue('selectedReco', reco);
                         setValue('newLogEntryType', 'pinheads');
                         setValue('newLogEntryTitle', 'Added pinheads');
@@ -433,14 +441,17 @@ class Organizer extends React.Component {
                         onClick={async e => {
                           e.preventDefault();
                           e.stopPropagation();
+                          console.log("generate qr for", reco.id);
+                          setValue('showLargeQr', Math.random());
+                          const qrData = await this.generateQR(
+                            `http://ops.crispycrickets.fi:3000/reco/${
+                              reco.id
+                              }`,
+                            200,
+                          );
                           setValue(
                             'showLargeQr',
-                            await this.generateQR(
-                              `http://ops.crispycrickets.fi:3000/reco/${
-                                reco.id
-                              }`,
-                              200,
-                            ),
+                            qrData,
                           );
                         }}
                       >

@@ -33,6 +33,9 @@ import {
   GET_LOGS_START,
   GET_LOGS_SUCCESS,
   GET_LOGS_ERROR,
+  GET_RECO_START,
+  GET_RECO_SUCCESS,
+  GET_RECO_ERROR,
   SET_VALUE
 } from '../constants';
 
@@ -47,6 +50,48 @@ import mutationUpdateLogEntry from '../data/graphql/queries/updateLogEntry.graph
 import mutationDeleteLogEntry from '../data/graphql/queries/deleteLogEntry.graphql';
 import queryGetAllModules from '../data/graphql/queries/getModules.graphql';
 import queryGetAllLogEntries from '../data/graphql/queries/getLogEntries.graphql';
+import queryGetReco from '../data/graphql/queries/getReco.graphql';
+
+const fetchReco = async (id, dispatch, client) => {
+
+  console.log("get reco", id);
+  dispatch({
+    type: GET_RECO_START,
+    payload: {
+      id
+    }
+  });
+
+  try {
+
+    const { data } = await client.query({
+      query: queryGetReco,
+      variables: { id },
+    });
+
+    dispatch({
+      type: GET_RECO_SUCCESS,
+      payload: {
+        reco: data.getReco,
+      },
+    });
+
+    return data.getReco;
+
+  } catch (error) {
+
+    dispatch({
+      type: GET_RECO_ERROR,
+      payload: {
+        error,
+      },
+    });
+
+    return null;
+
+  }
+
+};
 
 const fetchAllModules = async (dispatch, client) => {
 
@@ -433,7 +478,7 @@ export function deleteReco(id) {
 
 }
 
-export function createLogEntry({ logEntry }) {
+export function createLogEntry({ logEntry }, recoUpdate) {
 
   return async (dispatch, getState, { client, history }) => {
 
@@ -462,6 +507,10 @@ export function createLogEntry({ logEntry }) {
       console.log("created log entry", data);
       fetchAllLogEntries(data.createLogEntry.recoId, dispatch, client);
       fetchAllModules(dispatch, client);
+
+      setTimeout(() => {
+        fetchReco(data.createLogEntry.recoId, dispatch, client);
+      }, 1000);
 
       return data.createLogEntry;
 
@@ -570,6 +619,14 @@ export function deleteLogEntry(id) {
 
     }
 
+  };
+
+}
+
+export function getReco(id) {
+
+  return async (dispatch, getState, { client, history }) => {
+    return fetchReco(id, dispatch, client);
   };
 
 }

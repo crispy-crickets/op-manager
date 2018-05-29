@@ -20,6 +20,7 @@ import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import {
   addReco,
+  getReco,
   updateReco,
   deleteReco,
   createLogEntry,
@@ -136,6 +137,7 @@ class Organizer extends React.Component {
   render() {
     const {
       reco,
+      getReco,
       updateReco,
       setValue,
       createLogEntry,
@@ -175,6 +177,15 @@ class Organizer extends React.Component {
       'egg-tray-in': 'Placed egg trays',
       'egg-tray-out': 'Removed egg trays',
       'state-change': 'Changed state',
+    };
+
+    const defaultValues = {
+      pinheads: '10',
+      feed: '10',
+      water: '10',
+      'egg-tray-in': '2',
+      'egg-tray-out': '2',
+      'state-change': 'laying',
     };
 
     const actionLabels = {
@@ -260,7 +271,7 @@ class Organizer extends React.Component {
                               title: actionLabels[action].label,
                               numValue: actionLabels[action].value,
                             },
-                          });
+                          }, true);
                         }}
                       />
                     </div>
@@ -277,6 +288,10 @@ class Organizer extends React.Component {
                         setValue(
                           'newLogEntryTitle',
                           defaultTitles[e.target.value],
+                        );
+                        setValue(
+                          'newLogEntryValue',
+                          defaultValues[e.target.value],
                         );
                       }}
                     >
@@ -364,7 +379,7 @@ class Organizer extends React.Component {
                         } catch (err) {
                           logEntry.textValue = newLogEntryValue;
                         }
-                        createLogEntry({ logEntry });
+                        createLogEntry({ logEntry }, true);
                         console.log('new log entry', newLogEntryType);
                         if (newLogEntryType === 'state-change') {
                           updateReco({
@@ -425,11 +440,12 @@ class Organizer extends React.Component {
 
 const mapState = (state, ownProps) => {
   console.log('map state', state, ownProps);
-  return { ...state.organizer, reco: ownProps.reco };
+  return { ...state.organizer };
 };
 
 const mapDispatch = {
   addReco,
+  getReco,
   updateReco,
   deleteReco,
   createLogEntry,

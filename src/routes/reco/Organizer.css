@@ -158,7 +158,6 @@
 }
 
 .logItem {
-  display: flex;
   width: 100%;
 }
 
@@ -191,8 +190,10 @@
 .logItem .left .logItemValue {
 }
 
-.logItem .right .logItemText {
+.logItem .logItemText {
+  width: 100%;
   display: flex;
+  justify-content: flex-end;
 }
 
 .recoInfo .stripeBg {

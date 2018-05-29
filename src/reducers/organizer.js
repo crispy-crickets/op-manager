@@ -44,6 +44,9 @@ export default function organizer(state = null, action) {
       workPlanTraysIn: true,
       workPlanTraysOut: true,
       workPlanHarvest: true,
+      newLogEntryType: 'pinheads',
+      newLogEntryTitle: 'Added pinheads',
+      newLogEntryValue: '10',
     };
   }
 

@@ -1,0 +1,95 @@
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
+.root {
+}
+
+.container {
+}
+
+.row {
+  display: flex;
+}
+
+.rowMargin6 {
+  margin-bottom: 6px;
+}
+
+.rowMargin7 {
+  margin-bottom: 7px;
+}
+
+.reco {
+  width: 105mm;
+  height: 148mm;
+  border-bottom: 1px dashed #CCC;
+  border-left: 1px dashed #CCC;
+}
+
+.reco .header {
+  display: flex;
+  width: 100%;
+}
+
+.reco .header .qr {
+  display: flex;
+}
+
+.reco .header .info {
+  flex: 1;
+}
+
+.reco .header .info .text {
+  display: inline-flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 4mm;
+  margin-left: 0mm;
+  font-size: 28px;
+  width: 52mm;
+  font-family: Arial;
+}
+
+.text .place {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  margin-bottom: 7mm;
+  width: 100%;
+}
+
+.text .place .row {
+  background-color: #000;
+  color: #fff;
+  padding: 2mm;
+}
+
+.text .place .slot {
+  border: 1px solid black;
+  padding: 2mm;
+}
+
+.text .date {
+
+}
+
+.text .amount {
+
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+@media print {
+  html, body {
+    width: 210mm;
+    height: 297mm;
+  }
+}

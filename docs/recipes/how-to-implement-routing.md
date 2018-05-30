@@ -173,7 +173,7 @@ class App extends React.Component {
       <ul>
         <li>
           <a href="/" onClick={this.transition}>
-            Organizer
+            Print
           </a>
         </li>
         <li>

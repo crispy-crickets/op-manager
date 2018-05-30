@@ -88,7 +88,7 @@ exports[`Layout renders children correctly 1`] = `
           <span>
             English
           </span>
-           
+
         </span>
       </div>
       <div
@@ -156,7 +156,7 @@ exports[`Layout renders children correctly 1`] = `
         href="/"
         onClick={[Function]}
       >
-        Organizer
+        Print
       </a>
       <span
         className="spacer"

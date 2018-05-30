@@ -131,7 +131,7 @@ class Organizer extends React.Component {
   formatLogItemDate(dateStr) {
     const date = new Date(dateStr);
     const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    return `${date.getDate()}.${date.getMonth()}`;
+    return `${date.getDate()}.${date.getMonth() + 1}`;
   }
 
   render() {

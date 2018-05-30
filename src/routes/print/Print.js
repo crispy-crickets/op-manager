@@ -66,7 +66,7 @@ class Print extends React.Component {
                   Row {reco.rowNumber}
                 </div>
                 <div className={s.slot}>
-                  Slot {reco.slotIndex}
+                  Slot {reco.slotIndex + 1}
                 </div>
               </div>
               {

@@ -22,7 +22,7 @@ async function action({ client }, { module, range }) {
   return {
     title: 'Crispy Operations Manager - QR Codes',
     chunks: ['print'],
-    component: <Organizer modules={data.data.getAllModules} />,
+    component: <Organizer range={range} modules={data.data.getAllModules} />,
   };
 }
 

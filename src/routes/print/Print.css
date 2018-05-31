@@ -35,6 +35,7 @@
 .reco .header {
   display: flex;
   width: 100%;
+  margin-top: 32px;
 }
 
 .reco .header .qr {
@@ -67,6 +68,10 @@
 .text .place .row {
   background-color: #000;
   color: #fff;
+  padding: 2mm;
+}
+
+.text .place .side {
   padding: 2mm;
 }
 

@@ -29,7 +29,6 @@ class Print extends React.Component {
   async generateQR(text, size) {
     try {
       const dataUrl = await QRCode.toDataURL(text, { width: size });
-      console.log(dataUrl);
       return dataUrl;
     } catch (err) {
       console.error(err);
@@ -54,7 +53,7 @@ class Print extends React.Component {
     const qrData = await this.generateQR(`http://ops.crispycrickets.fi:3000/reco/${reco.id}`);
 
     const elem = (
-      <div className={s.reco}>
+      <div key={Math.random()} className={s.reco}>
         <div className={s.header}>
           <div className={s.qr}>
             <img src={qrData} />
@@ -64,6 +63,9 @@ class Print extends React.Component {
               <div className={s.place}>
                 <div className={s.row}>
                   Row {reco.rowNumber}
+                </div>
+                <div className={s.side}>
+                  { reco.moduleSide === 'right' ? 'R' : 'L' }
                 </div>
                 <div className={s.slot}>
                   Slot {reco.slotIndex + 1}
@@ -95,43 +97,92 @@ class Print extends React.Component {
   render() {
 
     const {
+      range,
       setValue,
-      showPrints,
       prints,
       modules,
     } = this.props;
 
     console.log('render print', this.props);
 
-    if (modules) {
+    if (modules && !prints) {
+
+      let allRecos = [];
+      for (let i = 0; i < modules.length; i++) {
+        for (let j = 0; j < modules[i].recos.length; j++) {
+          allRecos.push({ ...modules[i].recos[j], module: i });
+        }
+      }
+
+      //console.log("all recos", allRecos);
+
+      if (range) {
+
+        const rangeValues = [];
+        const rangeElems = range.split(',');
+
+        for (let i = 0; i < rangeElems.length; i++) {
+          const recoCoords = rangeElems[i].split(':');
+          rangeValues.push({
+            module: parseInt(recoCoords[0]),
+            side: recoCoords[1] === 'r' ? 'right' : 'left',
+            row: parseInt(recoCoords[2]),
+            slot: parseInt(recoCoords[3]) - 1
+          });
+        }
+
+        //console.log("range vals", rangeValues);
+        allRecos = allRecos.filter(reco => {
+
+          for (let i = 0; i < rangeValues.length; i++) {
+
+            //console.log(reco.module, rangeValues[i].module, reco.moduleSide, rangeValues[i].side, reco.rowNumber, rangeValues[i].row, reco.slotIndex, rangeValues[i].slot);
+            if (
+              reco.module === rangeValues[i].module &&
+              reco.moduleSide === rangeValues[i].side &&
+              reco.rowNumber === rangeValues[i].row &&
+              reco.slotIndex === rangeValues[i].slot
+            ) {
+              return true;
+            }
+
+          }
+
+          return false;
+
+        });
+
+      }
+
+      //console.log("filtered recos", allRecos);
 
       setTimeout(async () => {
 
         const printElems = [];
         let counter = 0;
 
-        for (let i = 0; i < modules.length; i++) {
-          for (let j = 0; j < modules[i].recos.length; j += 2) {
+        for (let i = 0; i < allRecos.length; i += 2) {
 
-            const elemPair = [];
+          const elemPair = [];
 
-            elemPair.push(await this.createElem(modules[i].recos[j]));
-            if (j + 1 < modules[i].recos.length) {
-              elemPair.push(await this.createElem(modules[i].recos[j + 1]));
-            }
-
-            printElems.push(
-              <div className={cx(s.row, counter % 2 ? s.rowMargin6 : s.rowMargin7)}>
-                {elemPair}
-              </div>
-            );
-
-            counter++;
-
+          elemPair.push(await this.createElem(allRecos[i]));
+          if (i + 1 < allRecos.length) {
+            elemPair.push(await this.createElem(allRecos[i + 1]));
           }
+
+          printElems.push(
+            <div key={Math.random()} className={cx(s.row, counter % 2 ? s.rowMargin6 : s.rowMargin7)}>
+              {elemPair}
+            </div>
+          );
+
+          counter++;
+
         }
 
-        setValue('prints', printElems);
+        if (!prints) {
+          setValue('prints', printElems);
+        }
 
       }, 1000);
     }
@@ -142,15 +193,7 @@ class Print extends React.Component {
           {
             prints ?
               <div>
-                {
-                  prints.map(print => {
-                    return (
-                      <div>
-                        {print}
-                      </div>
-                    );
-                  })
-                }
+                {prints}
               </div> :
               <div>
                 Loading...

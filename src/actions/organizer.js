@@ -510,7 +510,7 @@ export function createLogEntry({ logEntry }, recoUpdate) {
 
       setTimeout(() => {
         fetchReco(data.createLogEntry.recoId, dispatch, client);
-      }, 1000);
+      }, 2000);
 
       return data.createLogEntry;
 
@@ -605,7 +605,7 @@ export function deleteLogEntry(id) {
       fetchAllModules(dispatch, client);
       setTimeout(() => {
         fetchReco(data.deleteLogEntry.recoId, dispatch, client);
-      }, 1000);
+      }, 2000);
 
       return data.deleteLogEntry;
 

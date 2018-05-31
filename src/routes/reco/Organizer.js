@@ -238,8 +238,39 @@ class Organizer extends React.Component {
             'Loading...'
           ) : (
             <div className={s.recoInfo}>
+              <div className={s.nextReco}>
+                <div className={s.recoRow}>
+                  <div className={s.recoSide}>
+                    { reco.moduleSide === 'right' ? 'R' : 'L' }
+                  </div>
+                  <div className={s.rowNumber}>
+                    Row {reco.rowNumber}
+                  </div>
+                </div>
+                <div className={s.next}>
+                  NEXT
+                </div>
+                <div className={s.recoSlot}>
+                  Slot {reco.slotIndex + 1}
+                </div>
+              </div>
               <div className={s.recoStats}>
-                <div className={s.pinheads}>{pinheadsText}</div>
+                <div className={s.header}>
+                  <div className={s.recoRow}>
+                    <div className={s.recoSide}>
+                      { reco.moduleSide === 'right' ? 'R' : 'L' }
+                    </div>
+                    <div className={s.rowNumber}>
+                      Row {reco.rowNumber}
+                    </div>
+                  </div>
+                  <div className={s.pinheads}>
+                    {pinheadsText}
+                  </div>
+                  <div className={s.recoSlot}>
+                    Slot {reco.slotIndex + 1}
+                  </div>
+                </div>
                 <div className={s.days}>
                   {reco.state === 'growing' && (
                     <div className={s.grow}>GROW DAY {reco.lifeDays}</div>

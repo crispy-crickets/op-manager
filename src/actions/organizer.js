@@ -67,6 +67,7 @@ const fetchReco = async (id, dispatch, client) => {
     const { data } = await client.query({
       query: queryGetReco,
       variables: { id },
+      fetchPolicy: 'network-only'
     });
 
     dispatch({
@@ -510,7 +511,7 @@ export function createLogEntry({ logEntry }, recoUpdate) {
 
       setTimeout(() => {
         fetchReco(data.createLogEntry.recoId, dispatch, client);
-      }, 2000);
+      }, 500);
 
       return data.createLogEntry;
 
@@ -605,7 +606,7 @@ export function deleteLogEntry(id) {
       fetchAllModules(dispatch, client);
       setTimeout(() => {
         fetchReco(data.deleteLogEntry.recoId, dispatch, client);
-      }, 2000);
+      }, 500);
 
       return data.deleteLogEntry;
 

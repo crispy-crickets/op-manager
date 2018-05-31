@@ -170,6 +170,7 @@
 
 .logItem {
   display: flex;
+  position: relative;
 }
 
 .logItem .left {
@@ -203,6 +204,19 @@
 .logItem .right .logItemText {
   display: flex;
   width: 100%;
+}
+
+.logItem .deleteLogEntry {
+  display: flex;
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  right: 0px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  width: 20px;
+  justify-content: center;
 }
 
 .recoInfo .stripeBg {

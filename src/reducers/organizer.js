@@ -212,6 +212,7 @@ export default function organizer(state = null, action) {
         ...state,
         deletingLogEntry: null,
         deletedLogEntry: action.payload,
+        manualLogEntry: false
       };
     }
 
@@ -270,6 +271,7 @@ export default function organizer(state = null, action) {
         newLogEntryType: nextTypes[type][0],
         newLogEntryTitle: nextTypes[type][1],
         newLogEntry: null,
+        manualLogEntry: false
       };
     }
 
@@ -351,6 +353,7 @@ export default function organizer(state = null, action) {
         ...state,
         loadingReco: false,
         reco: action.payload.reco,
+        blockedAction: null
       };
     }
 

@@ -601,7 +601,11 @@ export function deleteLogEntry(id) {
         payload: data.deleteLogEntry,
       });
 
+      fetchAllLogEntries(data.deleteLogEntry.recoId, dispatch, client);
       fetchAllModules(dispatch, client);
+      setTimeout(() => {
+        fetchReco(data.deleteLogEntry.recoId, dispatch, client);
+      }, 1000);
 
       return data.deleteLogEntry;
 

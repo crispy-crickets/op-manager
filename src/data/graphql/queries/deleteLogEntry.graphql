@@ -1,3 +1,12 @@
 mutation DeleteLogEntry ($id:String!) {
-  deleteLogEntry (id:$id)
+  deleteLogEntry (id:$id) {
+    id
+    createdAt
+    recoId
+    type
+    numValue
+    textValue
+    title
+    text
+  }
 }

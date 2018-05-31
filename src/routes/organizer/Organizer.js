@@ -1069,6 +1069,11 @@ class Organizer extends React.Component {
                                     {logEntry.text}
                                   </div>
                                 </div>
+                                <div className={s.deleteLogEntry} onClick={() => {
+                                  deleteLogEntry(logEntry.id);
+                                }}>
+                                  D
+                                </div>
                               </div>
                             ))}
                           </div>

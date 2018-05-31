@@ -4,7 +4,7 @@ export const mutation = [
   `
   deleteLogEntry(
     id: String!
-  ): String
+  ): LogEntry
 `,
 ];
 
@@ -14,9 +14,10 @@ export const resolvers = {
 
     async deleteLogEntry(parent, args) {
 
+      const logEntry = await LogEntry.findById(args.id);
       const deleted = await LogEntry.destroy({ where: { id: args.id }, force: true });
 
-      return args.id;
+      return logEntry;
 
     },
 

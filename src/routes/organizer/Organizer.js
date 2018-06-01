@@ -798,7 +798,8 @@ class Organizer extends React.Component {
                   water: 'l',
                   'egg-tray-in': 'tray(s)',
                   'egg-tray-out': 'tray(s)',
-                  'state-change': '',
+                  'harvest': 'g',
+                  'state-change': ''
                 };
 
                 const defaultTitles = {
@@ -808,6 +809,7 @@ class Organizer extends React.Component {
                   'egg-tray-in': 'Placed egg trays',
                   'egg-tray-out': 'Removed egg trays',
                   'state-change': 'Changed state',
+                  'harvest': 'Harvest collected'
                 };
 
                 return (
@@ -1036,7 +1038,15 @@ class Organizer extends React.Component {
                                         values: { state: newRecoState },
                                       },
                                     });
+                                  } else if (newLogEntryType === 'harvest') {
+                                    updateReco({
+                                      reco: {
+                                        id: selectedReco.id,
+                                        values: { state: 'harvested' },
+                                      },
+                                    });
                                   }
+
                                 }}
                               />
                             </div>

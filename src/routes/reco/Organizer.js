@@ -169,6 +169,7 @@ class Organizer extends React.Component {
       water: 'l',
       'egg-tray-in': 'tray(s)',
       'egg-tray-out': 'tray(s)',
+      'harvest': 'g'
       'state-change': '',
     };
 
@@ -179,6 +180,7 @@ class Organizer extends React.Component {
       'egg-tray-in': 'Placed egg trays',
       'egg-tray-out': 'Removed egg trays',
       'state-change': 'Changed state',
+      'harvest': 'Harvest collected'
     };
 
     const defaultValues = {
@@ -211,7 +213,12 @@ class Organizer extends React.Component {
         label: 'Remove egg trays',
         color: '#FFB6C1',
       },
-      harvest: { type: 'harvest', value: 1900, label: 'Harvest', color: '' },
+      harvest: {
+        type: 'harvest',
+        value: 1900,
+        label: 'Harvest',
+        color: '#FFD700'
+      },
     };
 
     let pinheadsText = '';
@@ -337,6 +344,7 @@ class Organizer extends React.Component {
                           <option value="water">Water</option>
                           <option value="egg-tray-in">Egg tray in</option>
                           <option value="egg-tray-out">Egg tray out</option>
+                          <option value="harvest">Harvest</option>
                           <option value="state-change">State</option>
                         </select>&nbsp;
                       </div>
@@ -424,6 +432,13 @@ class Organizer extends React.Component {
                                 reco: {
                                   id: reco.id,
                                   values: {state: newRecoState},
+                                },
+                              });
+                            } else if (newLogEntryType === 'harvest') {
+                              updateReco({
+                                reco: {
+                                  id: selectedReco.id,
+                                  values: { state: 'harvested' },
                                 },
                               });
                             }

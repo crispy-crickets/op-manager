@@ -32,7 +32,7 @@ const Reco = Model.define(
     },
     state: {
       type: DataType.STRING,
-      defaultValue: 'growing'
+      defaultValue: 'empty'
     }
   },
   {

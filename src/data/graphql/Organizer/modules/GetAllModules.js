@@ -164,6 +164,9 @@ const completeReco = async reco => {
   if (water) requiredActions.push('water');
   if (eggState.next) requiredActions.push(eggState.next);
   if (state === 'empty') requiredActions.push('pinheads');
+  if (state.laying && lifeStats.lifeDays > 56) {
+    requiredActions.push('harvest');
+  }
 
   requiredActions = requiredActions.join(',');
 
@@ -183,7 +186,7 @@ export const resolvers = {
   RootQuery: {
     async getAllModules() {
       const modules = await Module.findAll({
-        include: [{ model: Reco, as: 'recos' }],
+        include: [{ model: Reco, as: 'recos', where: { state: { [Op.in]: ['empty', 'growing', 'laying' ] } } }],
       });
 
       for (let i = 0; i < modules.length; i++) {

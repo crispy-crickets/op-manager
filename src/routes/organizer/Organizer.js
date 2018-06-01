@@ -952,6 +952,8 @@ class Organizer extends React.Component {
                                   <option value="egg-tray-out">
                                     Egg tray out
                                   </option>
+
+                                  <option value="harvest">Harvest</option>
                                   <option value="state-change">State</option>
                                 </select>&nbsp;
                                 <TextField

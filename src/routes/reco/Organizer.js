@@ -169,7 +169,7 @@ class Organizer extends React.Component {
       water: 'l',
       'egg-tray-in': 'tray(s)',
       'egg-tray-out': 'tray(s)',
-      'harvest': 'g'
+      'harvest': 'g',
       'state-change': '',
     };
 
@@ -244,82 +244,91 @@ class Organizer extends React.Component {
           {loading ? (
             'Loading...'
           ) : (
+
             <div className={s.recoInfo}>
-              <div className={s.nextReco}>
-                <div className={s.recoRow}>
-                  <div className={s.recoSide}>
-                    { reco.moduleSide === 'right' ? 'R' : 'L' }
-                  </div>
-                  <div className={s.rowNumber}>
-                    Row {reco.rowNumber}
-                  </div>
-                </div>
-                <div className={s.next}>
-                  NEXT
-                </div>
-                <div className={s.recoSlot}>
-                  Slot {reco.slotIndex + 1}
-                </div>
-              </div>
-              <div className={s.recoStats}>
-                <div className={s.header}>
-                  <div className={s.recoRow}>
-                    <div className={s.recoSide}>
-                      { reco.moduleSide === 'right' ? 'R' : 'L' }
+              {
+                reco.state !== 'harvested' ?
+                  <div>
+                    <div className={s.nextReco}>
+                      <div className={s.recoRow}>
+                        <div className={s.recoSide}>
+                          {reco.moduleSide === 'right' ? 'R' : 'L'}
+                        </div>
+                        <div className={s.rowNumber}>
+                          Row {reco.rowNumber}
+                        </div>
+                      </div>
+                      <div className={s.next}>
+                        NEXT
+                      </div>
+                      <div className={s.recoSlot}>
+                        Slot {reco.slotIndex + 1}
+                      </div>
                     </div>
-                    <div className={s.rowNumber}>
-                      Row {reco.rowNumber}
+                    <div className={s.recoStats}>
+                      <div className={s.header}>
+                        <div className={s.recoRow}>
+                          <div className={s.recoSide}>
+                            {reco.moduleSide === 'right' ? 'R' : 'L'}
+                          </div>
+                          <div className={s.rowNumber}>
+                            Row {reco.rowNumber}
+                          </div>
+                        </div>
+                        <div className={s.pinheads}>
+                          {pinheadsText}
+                        </div>
+                        <div className={s.recoSlot}>
+                          Slot {reco.slotIndex + 1}
+                        </div>
+                      </div>
+                      <div className={s.days}>
+                        {reco.state === 'growing' && (
+                          <div className={s.grow}>GROW DAY {reco.lifeDays}</div>
+                        )}
+                        {reco.state === 'laying' && (
+                          <div className={s.laying}>
+                            <div>EGG DAY {reco.layingDays}</div>
+                            <div>GROW DAY {reco.lifeDays}</div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className={s.pinheads}>
-                    {pinheadsText}
-                  </div>
-                  <div className={s.recoSlot}>
-                    Slot {reco.slotIndex + 1}
-                  </div>
-                </div>
-                <div className={s.days}>
-                  {reco.state === 'growing' && (
-                    <div className={s.grow}>GROW DAY {reco.lifeDays}</div>
-                  )}
-                  {reco.state === 'laying' && (
-                    <div className={s.laying}>
-                      <div>EGG DAY {reco.layingDays}</div>
-                      <div>GROW DAY {reco.lifeDays}</div>
+                    <div className={s.requiredActions}>
+                      {requiredActions.map(action => (
+                        <div
+                          className={s.requiredAction}
+                          style={{backgroundColor: actionLabels[action].color}}
+                        >
+                          <div className={s.actionLabel}>
+                            {actionLabels[action].label}
+                          </div>
+                          <div className={s.actionCheckbox}>
+                            <input
+                              type="checkbox"
+                              disabled={action === blockedAction}
+                              onClick={e => {
+                                e.stopPropagation();
+                                setValue('blockedAction', action);
+                                createLogEntry({
+                                  logEntry: {
+                                    recoId: reco.id,
+                                    type: actionLabels[action].type,
+                                    title: actionLabels[action].label,
+                                    numValue: actionLabels[action].value,
+                                  },
+                                }, true);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className={s.requiredActions}>
-                {requiredActions.map(action => (
-                  <div
-                    className={s.requiredAction}
-                    style={{ backgroundColor: actionLabels[action].color }}
-                  >
-                    <div className={s.actionLabel}>
-                      {actionLabels[action].label}
-                    </div>
-                    <div className={s.actionCheckbox}>
-                      <input
-                        type="checkbox"
-                        disabled={action === blockedAction}
-                        onClick={e => {
-                          e.stopPropagation();
-                          setValue('blockedAction', action);
-                          createLogEntry({
-                            logEntry: {
-                              recoId: reco.id,
-                              type: actionLabels[action].type,
-                              title: actionLabels[action].label,
-                              numValue: actionLabels[action].value,
-                            },
-                          }, true);
-                        }}
-                      />
-                    </div>
+                  </div> :
+                  <div className={s.harvested}>
+                    HARVESTED
                   </div>
-                ))}
-              </div>
+              }
               {
                 manualLogEntry ?
                   <div className={s.logEntry}>
@@ -437,7 +446,7 @@ class Organizer extends React.Component {
                             } else if (newLogEntryType === 'harvest') {
                               updateReco({
                                 reco: {
-                                  id: selectedReco.id,
+                                  id: reco.id,
                                   values: { state: 'harvested' },
                                 },
                               });

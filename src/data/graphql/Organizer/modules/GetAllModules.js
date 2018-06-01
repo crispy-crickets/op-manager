@@ -173,7 +173,7 @@ const completeReco = async reco => {
   // console.log("LIFE AND LAY DAYS", lifeDays, layingDays);
   return {
     ...reco.toJSON(),
-    state,
+    state: reco.state === 'harvested' ? 'harvested' : state,
     firstPinheads: lifeStats.firstPinheads,
     pinheads: lifeStats.pinheads,
     lifeDays: Math.floor(lifeStats.lifeDays),

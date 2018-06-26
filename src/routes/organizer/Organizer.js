@@ -161,6 +161,19 @@ class Organizer extends React.Component {
     return workPlanStyles;
   }
 
+  updateSelections(reco) {
+    const { selections, setValue } = this.props;
+
+    if (selections[reco.id]) {
+      delete selections[reco.id];
+    } else {
+      selections[reco.id] = reco;
+    }
+
+    setValue('selections', null);
+    setValue('selections', selections);
+  }
+
   renderRow(
     module,
     moduleSide,
@@ -185,6 +198,8 @@ class Organizer extends React.Component {
       workPlanTraysIn,
       workPlanTraysOut,
       workPlanHarvest,
+      selections,
+      multiSelect,
     } = this.props;
 
     const slots = [];
@@ -318,36 +333,38 @@ class Organizer extends React.Component {
 
             const recoElem = reco ? (
               <div
-                className={cx(s.reco, recoSelected ? s.recoSelected : {})}
+                className={cx(
+                  s.reco,
+                  recoSelected ? s.recoSelected : {},
+                  selections[reco.id] ? s.multiSelected : {},
+                )}
                 style={workPlanStyles || {}}
                 onClick={
-                  recoSelected
-                    ? () => {
-                      setValue('showLargeQr', null);
-                      setValue('selectedReco', null);
-                    }
-                    : async e => {
+                  multiSelect
+                    ? () => this.updateSelections(reco)
+                    : recoSelected
+                      ? () => {
+                          setValue('showLargeQr', null);
+                          setValue('selectedReco', null);
+                        }
+                      : async e => {
+                          e.preventDefault();
+                          e.stopPropagation();
 
-                        e.preventDefault();
-                        e.stopPropagation();
+                          const qrData = await this.generateQR(
+                            `http://ops.crispycrickets.fi:3000/reco/${reco.id}`,
+                            40,
+                          );
 
-                        const qrData = await this.generateQR(
-                          `http://ops.crispycrickets.fi:3000/reco/${reco.id}`,
-                          40,
-                        );
+                          setValue('selectedRecoQr', qrData);
 
-                        setValue(
-                          'selectedRecoQr',
-                          qrData,
-                        );
-
-                        setValue('selectedReco', reco);
-                        setValue('newLogEntryType', 'pinheads');
-                        setValue('newLogEntryTitle', 'Added pinheads');
-                        setValue('newLogEntryDate', '');
-                        setValue('newLogEntryValue', '10');
-                        getAllLogEntries(reco.id);
-                      }
+                          setValue('selectedReco', reco);
+                          setValue('newLogEntryType', 'pinheads');
+                          setValue('newLogEntryTitle', 'Added pinheads');
+                          setValue('newLogEntryDate', '');
+                          setValue('newLogEntryValue', '10');
+                          getAllLogEntries(reco.id);
+                        }
                 }
               >
                 <div
@@ -441,18 +458,13 @@ class Organizer extends React.Component {
                         onClick={async e => {
                           e.preventDefault();
                           e.stopPropagation();
-                          console.log("generate qr for", reco.id);
+                          console.log('generate qr for', reco.id);
                           setValue('showLargeQr', Math.random());
                           const qrData = await this.generateQR(
-                            `http://ops.crispycrickets.fi:3000/reco/${
-                              reco.id
-                              }`,
+                            `http://ops.crispycrickets.fi:3000/reco/${reco.id}`,
                             200,
                           );
-                          setValue(
-                            'showLargeQr',
-                            qrData,
-                          );
+                          setValue('showLargeQr', qrData);
                         }}
                       >
                         <img src={selectedRecoQr} />
@@ -471,16 +483,19 @@ class Organizer extends React.Component {
               </div>
             ) : (
               <div
-                className={s.emptySlot}
-                onClick={() =>
-                  addReco({
-                    reco: {
-                      moduleId: module.id,
-                      moduleSide,
-                      rowNumber: slotRowNumber,
-                      slotIndex,
-                    },
-                  })
+                className={cx(s.emptySlot)}
+                onClick={
+                  multiSelect
+                    ? () => this.updateSelections(reco)
+                    : () =>
+                        addReco({
+                          reco: {
+                            moduleId: module.id,
+                            moduleSide,
+                            rowNumber: slotRowNumber,
+                            slotIndex,
+                          },
+                        })
                 }
               >
                 {slotIndex + 1}
@@ -564,6 +579,8 @@ class Organizer extends React.Component {
       workPlanTraysIn,
       workPlanTraysOut,
       workPlanHarvest,
+      multiSelect,
+      selections,
       data: { loading, getAllModules },
     } = this.props;
 
@@ -725,7 +742,7 @@ class Organizer extends React.Component {
             'Loading...'
           ) : (
             <div className={s.modules}>
-              {(modules || getAllModules).map(module => {
+              {(modules || getAllModules).map((module, moduleIndex) => {
                 const rightRows = [];
                 for (let i = 0; i < module.rowsRight; i++) {
                   rightRows.push(
@@ -798,8 +815,8 @@ class Organizer extends React.Component {
                   water: 'l',
                   'egg-tray-in': 'tray(s)',
                   'egg-tray-out': 'tray(s)',
-                  'harvest': 'g',
-                  'state-change': ''
+                  harvest: 'g',
+                  'state-change': '',
                 };
 
                 const defaultTitles = {
@@ -809,7 +826,7 @@ class Organizer extends React.Component {
                   'egg-tray-in': 'Placed egg trays',
                   'egg-tray-out': 'Removed egg trays',
                   'state-change': 'Changed state',
-                  'harvest': 'Harvest collected'
+                  harvest: 'Harvest collected',
                 };
 
                 return (
@@ -870,6 +887,51 @@ class Organizer extends React.Component {
                           )}
                         >
                           <div className={s.controls}>
+                            {multiSelect ? (
+                              <div>
+                                <a
+                                  href="#"
+                                  onClick={() => {
+                                    let printUrl =
+                                      'http://crispycrickets.fi:3000/print/';
+                                    const printIds = Object.keys(selections);
+                                    for (let i = 0; i < printIds.length; i++) {
+                                      const r = selections[printIds[i]];
+                                      printUrl += `${moduleIndex}:${
+                                        r.moduleSide === 'right' ? 'r' : 'l'
+                                      }:${r.rowNumber}:${r.slotIndex + 1},`;
+                                    }
+                                    console.log(printUrl);
+                                  }}
+                                >
+                                  Print All
+                                </a>
+                                &nbsp;&nbsp;
+                                <a
+                                  href="#"
+                                  onClick={() => {
+                                    setValue('multiSelect', false);
+                                    setValue('selections', {});
+                                  }}
+                                >
+                                  Cancel
+                                </a>
+                                &nbsp;&nbsp;
+                              </div>
+                            ) : (
+                              <div>
+                                <a
+                                  href="#"
+                                  onClick={() => {
+                                    setValue('selections', []);
+                                    setValue('multiSelect', true);
+                                  }}
+                                >
+                                  Select
+                                </a>
+                                &nbsp;&nbsp;
+                              </div>
+                            )}
                             {addRow ? (
                               <div>
                                 <a
@@ -1048,7 +1110,6 @@ class Organizer extends React.Component {
                                       },
                                     });
                                   }
-
                                 }}
                               />
                             </div>
@@ -1081,9 +1142,12 @@ class Organizer extends React.Component {
                                     {logEntry.text}
                                   </div>
                                 </div>
-                                <div className={s.deleteLogEntry} onClick={() => {
-                                  deleteLogEntry(logEntry.id);
-                                }}>
+                                <div
+                                  className={s.deleteLogEntry}
+                                  onClick={() => {
+                                    deleteLogEntry(logEntry.id);
+                                  }}
+                                >
                                   D
                                 </div>
                               </div>

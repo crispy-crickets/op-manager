@@ -169,7 +169,7 @@ class Organizer extends React.Component {
       water: 'l',
       'egg-tray-in': 'tray(s)',
       'egg-tray-out': 'tray(s)',
-      'harvest': 'g',
+      harvest: 'g',
       'state-change': '',
     };
 
@@ -180,7 +180,7 @@ class Organizer extends React.Component {
       'egg-tray-in': 'Placed egg trays',
       'egg-tray-out': 'Removed egg trays',
       'state-change': 'Changed state',
-      'harvest': 'Harvest collected'
+      harvest: 'Harvest collected',
     };
 
     const defaultValues = {
@@ -190,6 +190,7 @@ class Organizer extends React.Component {
       'egg-tray-in': '2',
       'egg-tray-out': '2',
       'state-change': 'laying',
+      harvest: '1900',
     };
 
     const actionLabels = {
@@ -217,7 +218,7 @@ class Organizer extends React.Component {
         type: 'harvest',
         value: 1900,
         label: 'Harvest',
-        color: '#FFD700'
+        color: '#FFD700',
       },
     };
 
@@ -244,62 +245,51 @@ class Organizer extends React.Component {
           {loading ? (
             'Loading...'
           ) : (
-
             <div className={s.recoInfo}>
-              {
-                reco.state !== 'harvested' ?
-                  <div>
-                    <div className={s.nextReco}>
+              {reco.state !== 'harvested' ? (
+                <div>
+                  <div className={s.nextReco}>
+                    <div className={s.recoRow}>
+                      <div className={s.recoSide}>
+                        {reco.moduleSide === 'right' ? 'R' : 'L'}
+                      </div>
+                      <div className={s.rowNumber}>Row {reco.rowNumber}</div>
+                    </div>
+                    <div className={s.next}>NEXT</div>
+                    <div className={s.recoSlot}>Slot {reco.slotIndex + 1}</div>
+                  </div>
+                  <div className={s.recoStats}>
+                    <div className={s.header}>
                       <div className={s.recoRow}>
                         <div className={s.recoSide}>
                           {reco.moduleSide === 'right' ? 'R' : 'L'}
                         </div>
-                        <div className={s.rowNumber}>
-                          Row {reco.rowNumber}
-                        </div>
+                        <div className={s.rowNumber}>Row {reco.rowNumber}</div>
                       </div>
-                      <div className={s.next}>
-                        NEXT
-                      </div>
+                      <div className={s.pinheads}>{pinheadsText}</div>
                       <div className={s.recoSlot}>
                         Slot {reco.slotIndex + 1}
                       </div>
                     </div>
-                    <div className={s.recoStats}>
-                      <div className={s.header}>
-                        <div className={s.recoRow}>
-                          <div className={s.recoSide}>
-                            {reco.moduleSide === 'right' ? 'R' : 'L'}
-                          </div>
-                          <div className={s.rowNumber}>
-                            Row {reco.rowNumber}
-                          </div>
+                    <div className={s.days}>
+                      {reco.state === 'growing' && (
+                        <div className={s.grow}>GROW DAY {reco.lifeDays}</div>
+                      )}
+                      {reco.state === 'laying' && (
+                        <div className={s.laying}>
+                          <div>EGG DAY {reco.layingDays}</div>
+                          <div>GROW DAY {reco.lifeDays}</div>
                         </div>
-                        <div className={s.pinheads}>
-                          {pinheadsText}
-                        </div>
-                        <div className={s.recoSlot}>
-                          Slot {reco.slotIndex + 1}
-                        </div>
-                      </div>
-                      <div className={s.days}>
-                        {reco.state === 'growing' && (
-                          <div className={s.grow}>GROW DAY {reco.lifeDays}</div>
-                        )}
-                        {reco.state === 'laying' && (
-                          <div className={s.laying}>
-                            <div>EGG DAY {reco.layingDays}</div>
-                            <div>GROW DAY {reco.lifeDays}</div>
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
-                    <div className={s.requiredActions}>
-                      {requiredActions.map(action => (
-                        <div
-                          className={s.requiredAction}
-                          style={{backgroundColor: actionLabels[action].color}}
-                        >
+                  </div>
+                  <div className={s.requiredActions}>
+                    {requiredActions.map(action => (
+                      <div
+                        className={s.requiredAction}
+                        style={{ backgroundColor: actionLabels[action].color }}
+                      >
+                        <div className={s.actionLabel}>
                           <div className={s.actionLabel}>
                             {actionLabels[action].label}
                           </div>
@@ -310,158 +300,163 @@ class Organizer extends React.Component {
                               onClick={e => {
                                 e.stopPropagation();
                                 setValue('blockedAction', action);
-                                createLogEntry({
-                                  logEntry: {
-                                    recoId: reco.id,
-                                    type: actionLabels[action].type,
-                                    title: actionLabels[action].label,
-                                    numValue: actionLabels[action].value,
+                                createLogEntry(
+                                  {
+                                    logEntry: {
+                                      recoId: reco.id,
+                                      type: actionLabels[action].type,
+                                      title: actionLabels[action].label,
+                                      numValue: actionLabels[action].value,
+                                    },
                                   },
-                                }, true);
+                                  true,
+                                );
                               }}
                             />
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div> :
-                  <div className={s.harvested}>
-                    HARVESTED
+                      </div>
+                    ))}
                   </div>
-              }
-              {
-                manualLogEntry ?
-                  <div className={s.logEntry}>
-                    <div className={s.logEntryRow}>
-                      <div className={s.logEntryType}>
+                </div>
+              ) : (
+                <div className={s.harvested}>HARVESTED</div>
+              )}
+              {manualLogEntry ? (
+                <div className={s.logEntry}>
+                  <div className={s.logEntryRow}>
+                    <div className={s.logEntryType}>
+                      <select
+                        value={newLogEntryType}
+                        onChange={e => {
+                          setValue('newLogEntryType', e.target.value);
+                          setValue(
+                            'newLogEntryTitle',
+                            defaultTitles[e.target.value],
+                          );
+                          setValue(
+                            'newLogEntryValue',
+                            defaultValues[e.target.value],
+                          );
+                        }}
+                      >
+                        <option value="pinheads">Pinheads</option>
+                        <option value="feed">Feed</option>
+                        <option value="water">Water</option>
+                        <option value="egg-tray-in">Egg tray in</option>
+                        <option value="egg-tray-out">Egg tray out</option>
+                        <option value="harvest">Harvest</option>
+                        <option value="state-change">State</option>
+                      </select>&nbsp;
+                    </div>
+                    <div className={s.logEntryValue}>
+                      {newLogEntryType === 'state-change' ? (
                         <select
-                          value={newLogEntryType}
+                          value={newRecoState || reco.state}
                           onChange={e => {
-                            setValue('newLogEntryType', e.target.value);
-                            setValue(
-                              'newLogEntryTitle',
-                              defaultTitles[e.target.value],
-                            );
-                            setValue(
-                              'newLogEntryValue',
-                              defaultValues[e.target.value],
-                            );
+                            setValue('newRecoState', e.target.value);
                           }}
                         >
-                          <option value="pinheads">Pinheads</option>
-                          <option value="feed">Feed</option>
-                          <option value="water">Water</option>
-                          <option value="egg-tray-in">Egg tray in</option>
-                          <option value="egg-tray-out">Egg tray out</option>
-                          <option value="harvest">Harvest</option>
-                          <option value="state-change">State</option>
-                        </select>&nbsp;
-                      </div>
-                      <div className={s.logEntryValue}>
-                        {newLogEntryType === 'state-change' ? (
-                          <select
-                            value={newRecoState || reco.state}
-                            onChange={e => {
-                              setValue('newRecoState', e.target.value);
-                            }}
-                          >
-                            <option value="growing">Growing</option>
-                            <option value="laying">Laying</option>
-                          </select>
-                        ) : (
-                          <input
-                            placeholder="Value"
-                            type="text"
-                            value={newLogEntryValue}
-                            onChange={e =>
-                              setValue('newLogEntryValue', e.target.value)
-                            }
-                          />
-                        )}
-                      </div>
-                    </div>
-                    <div className={s.logEntryRow}>
-                      <div className={s.logEntryTitle}>
+                          <option value="growing">Growing</option>
+                          <option value="laying">Laying</option>
+                        </select>
+                      ) : (
                         <input
+                          placeholder="Value"
                           type="text"
-                          placeholder="Title"
-                          value={newLogEntryTitle}
+                          value={newLogEntryValue}
                           onChange={e =>
-                            setValue('newLogEntryTitle', e.target.value)
+                            setValue('newLogEntryValue', e.target.value)
                           }
                         />
-                      </div>
-                      <div className={s.logEntryDate}>
-                        <input
-                          placeholder="Date"
-                          type="text"
-                          value={newLogEntryDate}
-                          onChange={e =>
-                            setValue('newLogEntryDate', e.target.value)
-                          }
-                        />
-                      </div>
+                      )}
                     </div>
-                    <div className={s.logEntryRow}>
-                      <div className={s.logEntryText}>
-                        <input
-                          type="text"
-                          value={newLogEntryText}
-                          onChange={e =>
-                            setValue('newLogEntryText', e.target.value)
-                          }
-                        />
-                      </div>
-
-                      <div className={s.logEntrySubmit}>
-                        <button
-                          onClick={() => {
-                            const logEntry = {
-                              recoId: reco.id,
-                              type: newLogEntryType,
-                              title: newLogEntryTitle,
-                              text: newLogEntryText,
-                            };
-
-                            if (newLogEntryDate) {
-                              logEntry.createdAt = newLogEntryDate;
-                            }
-
-                            console.log('saving log entry', logEntry);
-                            try {
-                              const numValue = parseInt(newLogEntryValue);
-                              logEntry.numValue = numValue;
-                            } catch (err) {
-                              logEntry.textValue = newLogEntryValue;
-                            }
-                            createLogEntry({logEntry}, true);
-                            console.log('new log entry', newLogEntryType);
-                            if (newLogEntryType === 'state-change') {
-                              updateReco({
-                                reco: {
-                                  id: reco.id,
-                                  values: {state: newRecoState},
-                                },
-                              });
-                            } else if (newLogEntryType === 'harvest') {
-                              updateReco({
-                                reco: {
-                                  id: reco.id,
-                                  values: { state: 'harvested' },
-                                },
-                              });
-                            }
-                          }}
-                        >
-                          OK
-                        </button>
-                      </div>
-                    </div>
-                  </div> :
-                  <div className={s.modifyLog}>
-                    <a href="#" onClick={() => setValue('manualLogEntry', true)}>Modify log</a>
                   </div>
-              }
+                  <div className={s.logEntryRow}>
+                    <div className={s.logEntryTitle}>
+                      <input
+                        type="text"
+                        placeholder="Title"
+                        value={newLogEntryTitle}
+                        onChange={e =>
+                          setValue('newLogEntryTitle', e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className={s.logEntryDate}>
+                      <input
+                        placeholder="Date"
+                        type="text"
+                        value={newLogEntryDate}
+                        onChange={e =>
+                          setValue('newLogEntryDate', e.target.value)
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className={s.logEntryRow}>
+                    <div className={s.logEntryText}>
+                      <input
+                        type="text"
+                        value={newLogEntryText}
+                        onChange={e =>
+                          setValue('newLogEntryText', e.target.value)
+                        }
+                      />
+                    </div>
+
+                    <div className={s.logEntrySubmit}>
+                      <button
+                        onClick={() => {
+                          const logEntry = {
+                            recoId: reco.id,
+                            type: newLogEntryType,
+                            title: newLogEntryTitle,
+                            text: newLogEntryText,
+                          };
+
+                          if (newLogEntryDate) {
+                            logEntry.createdAt = newLogEntryDate;
+                          }
+
+                          console.log('saving log entry', logEntry);
+                          try {
+                            const numValue = parseInt(newLogEntryValue);
+                            logEntry.numValue = numValue;
+                          } catch (err) {
+                            logEntry.textValue = newLogEntryValue;
+                          }
+                          createLogEntry({ logEntry }, true);
+                          console.log('new log entry', newLogEntryType);
+                          if (newLogEntryType === 'state-change') {
+                            updateReco({
+                              reco: {
+                                id: reco.id,
+                                values: { state: newRecoState },
+                              },
+                            });
+                          } else if (newLogEntryType === 'harvest') {
+                            updateReco({
+                              reco: {
+                                id: reco.id,
+                                values: { state: 'harvested' },
+                              },
+                            });
+                          }
+                        }}
+                      >
+                        OK
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className={s.modifyLog}>
+                  <a href="#" onClick={() => setValue('manualLogEntry', true)}>
+                    Modify log
+                  </a>
+                </div>
+              )}
               <div>
                 {(logEntries || (reco || {}).logEntries || []).map(
                   (logEntry, index) => (
@@ -472,7 +467,12 @@ class Organizer extends React.Component {
                       )}
                     >
                       <div className={s.row}>
-                        <div className={cx(s.left, manualLogEntry ? s.modifiable : {})}>
+                        <div
+                          className={cx(
+                            s.left,
+                            manualLogEntry ? s.modifiable : {},
+                          )}
+                        >
                           <div className={s.logItemDate}>
                             {this.formatLogItemDate(logEntry.createdAt)}
                           </div>
@@ -486,22 +486,22 @@ class Organizer extends React.Component {
                           </div>
                         </div>
                       </div>
-                      {
-                        logEntry.text &&
+                      {logEntry.text &&
                         logEntry.text !== '' && (
                           <div className={s.row}>
                             <div className={s.logItemText}>{logEntry.text}</div>
                           </div>
-                        )
-                      }
-                      {
-                        manualLogEntry &&
-                          <div className={s.deleteLogEntry} onClick={() => {
+                        )}
+                      {manualLogEntry && (
+                        <div
+                          className={s.deleteLogEntry}
+                          onClick={() => {
                             deleteLogEntry(logEntry.id);
-                          }}>
-                            D
-                          </div>
-                      }
+                          }}
+                        >
+                          D
+                        </div>
+                      )}
                     </div>
                   ),
                 )}

@@ -211,7 +211,7 @@
   position: absolute;
   top: 1px;
   bottom: 1px;
-  right: 0px;
+  right: 0;
   background: #000;
   color: #fff;
   cursor: pointer;
@@ -337,6 +337,12 @@
   justify-content: center;
   transition: width 0.25s ease-in, height 0.25s ease-in;
   z-index: 1;
+}
+
+.slot .multiSelected {
+  border: 1px solid red;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
 }
 
 .reco:hover {

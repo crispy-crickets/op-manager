@@ -337,6 +337,7 @@ class Organizer extends React.Component {
                   s.reco,
                   recoSelected ? s.recoSelected : {},
                   selections[reco.id] ? s.multiSelected : {},
+                  (!selections[reco.id] && multiSelect) ? s.multiSelectable : {},
                 )}
                 style={workPlanStyles || {}}
                 onClick={
@@ -484,18 +485,14 @@ class Organizer extends React.Component {
             ) : (
               <div
                 className={cx(s.emptySlot)}
-                onClick={
-                  multiSelect
-                    ? () => this.updateSelections(reco)
-                    : () =>
-                        addReco({
-                          reco: {
-                            moduleId: module.id,
-                            moduleSide,
-                            rowNumber: slotRowNumber,
-                            slotIndex,
-                          },
-                        })
+                onClick={() => addReco({
+                    reco: {
+                      moduleId: module.id,
+                      moduleSide,
+                      rowNumber: slotRowNumber,
+                      slotIndex,
+                    },
+                  })
                 }
               >
                 {slotIndex + 1}
@@ -893,7 +890,7 @@ class Organizer extends React.Component {
                                   href="#"
                                   onClick={() => {
                                     let printUrl =
-                                      'http://crispycrickets.fi:3000/print/';
+                                      'http://ops.crispycrickets.fi:3000/print/';
                                     const printIds = Object.keys(selections);
                                     for (let i = 0; i < printIds.length; i++) {
                                       const r = selections[printIds[i]];
@@ -902,6 +899,7 @@ class Organizer extends React.Component {
                                       }:${r.rowNumber}:${r.slotIndex + 1},`;
                                     }
                                     console.log(printUrl);
+                                    window.open(printUrl, '_blank');
                                   }}
                                 >
                                   Print All

@@ -345,6 +345,12 @@
   height: calc(100% - 2px);
 }
 
+.slot .multiSelectable {
+  border: 1px solid #000;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+}
+
 .reco:hover {
   z-index: 2;
   width: 140%;

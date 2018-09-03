@@ -274,7 +274,7 @@ class Invest extends React.Component {
                       1,
                     )}
                     {this.counterInput(
-                      'Tuotavuus',
+                      'Tuottavuus',
                       'counterYield',
                       counterYield,
                       1.3,
@@ -366,7 +366,7 @@ class Invest extends React.Component {
               <div className={s.sectionText}>
                 <div>
                   Yrityksessä on 120 000 € matalakorkoista lainarahaa, joka on
-                  käytetty tuotantolaitoksen rakentamiseen ja rakentamisen sekä
+                  käytetty tuotantolaitoksen rakentamiseen ja
                   tuotantotoiminnan käynnistämisen aikaisiin juokseviin kuluihin
                   kuten vuokraan. Lisäksi vireillä on hakemus 50 000 € tuelle
                   Business Finlandilta. Lainalla on 80 000 € Finnveran takaus.

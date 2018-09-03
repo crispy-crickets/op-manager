@@ -15,7 +15,7 @@ import Link from '../Link';
 import Navigation from '../Navigation';
 import LanguageSwitcher from '../LanguageSwitcher';
 import logoUrl from './logo.png';
-import logoUrl2x from './logo-small@2x.png';
+import logoUrl2x from './logo.png';
 
 const messages = defineMessages({
   brand: {

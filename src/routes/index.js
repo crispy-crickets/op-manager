@@ -20,6 +20,10 @@ const routes = {
       load: () => import(/* webpackChunkName: 'organizer' */ './organizer'),
     },
     {
+      path: '/invest',
+      load: () => import(/* webpackChunkName: 'invest' */ './invest'),
+    },
+    {
       path: '/print/:range',
       load: () => import(/* webpackChunkName: 'print' */ './print'),
     },

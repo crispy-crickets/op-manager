@@ -1,0 +1,220 @@
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
+html {
+  margin: 0;
+}
+
+.root {
+}
+
+.container {
+  margin: 0 auto;
+}
+
+.preface {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 28px;
+  font-size: 24px;
+  color: #666;
+}
+
+.row {
+  width: 100%;
+  margin-bottom: 24px;
+  padding-top: 16px;
+  padding-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.row1 {
+  background-color: #d2e4d2;
+}
+
+.rowText {
+  flex-grow: 1;
+}
+
+.rowText > div {
+  margin-bottom: 8px;
+}
+
+.row .rowText {
+  margin-left: 18px;
+  text-align: center;
+}
+
+.rowMedia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.rowMedia iframe {
+  max-width: 800px;
+}
+
+.sectionHeader {
+  font-size: 24px;
+}
+
+.sectionText {
+  width: 96%;
+  max-width: 1000px;
+}
+
+.sectionText div {
+  margin-bottom: 12px;
+}
+
+.row3 {
+  background-color: #dad19f;
+}
+
+.row4 {
+  margin-bottom: 24px;
+}
+
+.row5 {
+  margin-bottom: 24px;
+}
+
+.hidden {
+  display: none;
+}
+
+.counterContainer {
+  margin-top: 18px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.counterControls {
+}
+
+.counterInputs {
+
+}
+
+.counterInput {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  height: 48px;
+  display: flex;
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 10px;
+}
+
+.counterInputName {
+  font-size: 20px;
+}
+
+.counterInputControls {
+  min-width: 200px;
+}
+
+.counterInputValue {
+  margin-left: 24px;
+  flex-grow: 1;
+}
+
+.numericalValue {
+  font-size: 24px;
+}
+
+.inputUnit {
+
+}
+
+.counterSlider {
+  margin-top: 8px;
+  display: flex;
+}
+
+.counterResults {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 200px;
+}
+
+@media(max-width: 720px) {
+  .counterContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.counterExpenses {
+  width: 100%;
+  max-width: 300px;
+  justify-content: space-between;
+  display: flex;
+}
+
+.counterRevenue {
+  width: 100%;
+  max-width: 300px;
+  justify-content: space-between;
+  display: flex;
+}
+
+.counterProfit {
+  width: 100%;
+  max-width: 300px;
+  justify-content: space-between;
+  display: flex;
+  border-top: 1px dotted gray;
+}
+
+.counterRevenue .resultValue {
+  color: darkgreen;
+}
+
+.counterExpenses .resultValue {
+  color: darkred;
+}
+
+.counterProfit .resultValue {
+  font-weight: bold;
+}
+
+.monthlyEconomy {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.monthlyEconomyHeader {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.monthlyEconomyBody {
+
+}
+
+.requiredInvestment {
+  margin-top: 22px;
+}
+
+.requiredInvestmentHeader {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.requiredInvestmentBody {
+  font-size: 22px;
+  color: #555;
+}

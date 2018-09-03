@@ -37,6 +37,7 @@ const messages = defineMessages({
 
 class Header extends React.Component {
   render() {
+    const { title } = this.props;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -52,7 +53,7 @@ class Header extends React.Component {
               </Link>
             </div>
             <div className={s.logoTitle}>
-              <span className={s.brandTxt}>OPERATION</span>
+              <span className={s.brandTxt}>{title || 'OPERATION'}</span>
             </div>
           </div>
         </div>

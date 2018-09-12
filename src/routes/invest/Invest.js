@@ -214,8 +214,8 @@ class Invest extends React.Component {
                 </div>
                 <div>
                   Kehitämme ohjelmistojärjestelmiä hyönteistalouden tarpeisiin
-                  ja pitemmän aikavälin projektina alkutuotantotalouden
-                  markkina-alustaa globaaleille alkutuotantomarkkinoille.
+                  ja pidemmän aikavälin projektina alkutuotantotalouden
+                  markkina-alusta globaaleille alkutuotantomarkkinoille.
                   Liioittelematon tavoitteemme on mullistaa alkutuotannon
                   markkinat ja päästä osallisiksi alan biljoonien dollarien
                   liikevaihdosta.

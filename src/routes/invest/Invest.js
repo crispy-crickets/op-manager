@@ -191,7 +191,7 @@ class Invest extends React.Component {
               <iframe
                 width="100%"
                 height="400px"
-                src="https://www.youtube.com/watch?v=uGkCsshykF8"
+                src="https://www.youtube.com/embed/uGkCsshykF8"
               />
             </div>
           </div>
@@ -226,7 +226,7 @@ class Invest extends React.Component {
               <iframe
                 width="100%"
                 height="400px"
-                src="https://www.youtube.com/watch?v=YHDs51X2fGs"
+                src="https://www.youtube.com/embed/YHDs51X2fGs"
               />
             </div>
           </div>
